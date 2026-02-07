@@ -1,15 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package es.rebextech.controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -17,66 +14,58 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CarritoController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CarritoController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CarritoController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        HttpSession sesion = request.getSession();
+        String accionCarrito = request.getParameter("accionCarrito");
+        String idProducto = request.getParameter("idProducto");
+        String urlDestino = "/CARRITO/carrito.jsp";
+
+        // 2. LÓGICA DE AGREGAR (Si accionCarrito == "agregar")
+        if ("agregar".equals(accionCarrito) && idProducto != null) {
+            if (sesion.getAttribute("usuarioSesion") == null) {
+                // USUARIO ANÓNIMO: Guardamos en Cookie (PDF)
+                Cookie cookieCarrito = new Cookie("carritoRebex", idProducto);
+                cookieCarrito.setMaxAge(60 * 60 * 24 * 7); // 1 semana
+                cookieCarrito.setPath("/");
+                response.addCookie(cookieCarrito);
+            } else {
+                // USUARIO REGISTRADO: Aquí irá tu lógica de sesión más adelante
+            }
+        }
+
+        // 3. LÓGICA DE VISUALIZACIÓN
+        // Comprobamos si hay algo para mostrar "Carrito Vacío" correctamente
+        boolean vacio = true;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("carritoRebex".equals(c.getName())) {
+                    vacio = false;
+                    request.setAttribute("itemsCarritoCookie", c.getValue());
+                    break;
+                }
+            }
+        }
+
+        // Si hay sesión de usuario, también comprobamos el carrito de sesión
+        if (sesion.getAttribute("carritoSesion") != null) {
+            vacio = false;
+        }
+
+        request.setAttribute("carritoVacio", vacio);
+        request.getRequestDispatcher(urlDestino).forward(request, response);
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

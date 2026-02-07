@@ -5,12 +5,14 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
-        <jsp:include page="INCLUDE/metas.inc"/>
+        <jsp:include page="/INCLUDE/metas.inc"/>
         <title>Carrito-RebexTech</title>
         <link rel="stylesheet" href="${estilo}">
     </head>
     <body>
-        <jsp:include page="index.jsp" /> <div class="container my-5 pt-5">
+        <jsp:include page="/INCLUDE/navbar.jsp" />
+        
+        <div class="container my-5 pt-5">
             <h2 class="fw-bold mb-4 section-title-rebex">TU CARRITO DE COMPRAS</h2>
 
             <div class="row">
@@ -40,7 +42,7 @@
                         <h4 class="fw-bold mb-4">Resumen</h4>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Productos:</span>
-                            <span>0.00€</span>
+                            <span>${empty totalPrecio ? '0.00' : totalPrecio}€</span>
                         </div>
                         <div class="d-flex justify-content-between mb-4">
                             <span>Envío:</span>
@@ -49,17 +51,19 @@
                         <hr>
                         <div class="d-flex justify-content-between mb-4">
                             <span class="fs-5 fw-bold">TOTAL:</span>
-                            <span class="fs-5 fw-bold text-morado-claro">0.00€</span>
+                            <span class="fs-5 fw-bold text-morado-claro">${empty totalPrecio ? '0.00' : totalPrecio}€</span>
                         </div>
 
                         <c:choose>
                             <c:when test="${empty sessionScope.usuarioSesion}">
+                                <%-- Si es anónimo, el botón abre el modal de login que está en index.jsp --%>
                                 <button class="btn btn-rebex w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                    IDENTIFÍCATE PARA COMPRAR
+                                    IDENTÍFICATE PARA COMPRAR
                                 </button>
                             </c:when>
                             <c:otherwise>
-                                <a href="ControladorPedido" class="btn btn-rebex w-100 py-3 fw-bold">
+                                <%-- Si está registrado, va al FrontController para procesar el pago --%>
+                                <a href="FrontController?accion=finalizarCompra" class="btn btn-rebex w-100 py-3 fw-bold">
                                     FINALIZAR COMPRA
                                 </a>
                             </c:otherwise>
@@ -68,6 +72,9 @@
                 </div>
             </div>
         </div>
+                        
+        <jsp:include page="/INCLUDE/pie.inc" />
+        <jsp:include page="/INCLUDE/modal.inc" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>

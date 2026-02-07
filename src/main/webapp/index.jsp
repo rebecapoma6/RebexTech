@@ -14,63 +14,7 @@
 
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
-            <div class="container">
-                <a class="navbar-brand" href="index.jsp"> 
-                    <img src="IMAGENES/LogoRebexTech.png" alt="RebexTech" class="logo-rebex">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <form class="d-flex mx-auto w-50" action="CatalogoController" method="GET">
-                        <input class="form-control me-2 form-control-rebex" type="search" name="busqueda" placeholder="Buscar componentes...">
-                        <button class="btn btn-rebex" type="submit"><i class="bi bi-search"></i></button>
-                    </form>
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item me-3">
-                            <a class="nav-link position-relative icono-carrito-rebex" href="ControladorCarrito">
-                                <i class="bi bi-cart-fill fs-4"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tamano-badge-carrito">
-                                    ${empty sessionScope.cantidadProductos ? 0 : sessionScope.cantidadProductos}
-                                </span>
-                            </a>
-                        </li>
-
-                        <c:choose>
-                            <%-- Comprobamos si el objeto 'usuarioSesion' existe en la sesión --%>
-                            <c:when test="${empty sessionScope.usuarioSesion}">
-                                <li class="nav-item">
-                                    <a class="btn btn-rebex px-4" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                        Registro / Iniciar Sesión
-                                    </a>
-                                </li>
-                            </c:when>
-
-                            <c:otherwise>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-white fw-bold" href="#" id="menuUsuario" data-bs-toggle="dropdown">
-                                        Hola, ${sessionScope.usuarioSesion.nombre}
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                        <li><a class="dropdown-item" href="perfil.jsp"><i class="bi bi-person-circle me-2"></i>Mi Perfil</a></li>
-                                        <li><a class="dropdown-item" href="pedidos.jsp"><i class="bi bi-box-seam me-2"></i>Mis Pedidos</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <a class="dropdown-item text-danger" href="ControladorCerrarSesion">
-                                                <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </c:otherwise>
-                        </c:choose>
-                    </ul>                    
-                </div>
-            </div>
-        </nav>
-        
-        
+        <jsp:include page="/INCLUDE/navbar.jsp" />
 
         <div id="heroRebex" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
@@ -102,8 +46,8 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
 
         <section id="ventas" class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,7 +65,10 @@
                                 <h5 class="card-title h6 fw-bold text-dark">${p.nombre}</h5>
                                 <div class="mt-auto d-flex justify-content-between align-items-end">
                                     <p class="text-primary fs-5 fw-bold mb-0">${p.precio}€</p>
-                                    <a href="CarritoController?id=${p.idproducto}" class="btn btn-rebex rounded-3"><i class="bi bi-cart-plus-fill"></i></a>
+                                    <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${p.idproducto}" 
+                                       class="btn btn-rebex rounded-3">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -129,8 +76,8 @@
                 </c:forEach>
             </div>
         </section>
-        
-        
+
+
 
         <section id="sobre-nosotros" class="py-5 bg-light">
             <div class="container">
@@ -162,8 +109,8 @@
                 </div>
             </div>
         </section>
-        
-        
+
+
 
         <section class="logo-slider">
             <div class="logo-slide-track">
@@ -177,137 +124,9 @@
                     </c:forEach>
             </div>
         </section>
-        
-        
 
-        <footer class="footer-rebex text-white py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                        <h5 class="fw-bold mb-3">REBEXTECH</h5>
-                        <p class="small opacity-75">Tu tienda de confianza para el montaje de PCs personalizados.</p>
-                    </div>
-                    <div class="col-md-4 mb-4 text-center">
-                        <h6 class="fw-bold mb-3">Enlaces Rápidos</h6>
-                        <ul class="list-unstyled small">
-                            <li><a href="#" class="text-white-50 text-decoration-none">Inicio</a></li>
-                            <li><a href="#ventas" class="text-white-50 text-decoration-none">Lo más vendido</a></li>
-                            <li><a href="#sobre-nosotros" class="text-white-50 text-decoration-none">Nosotros</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4 mb-4 text-md-end">
-                        <h6 class="fw-bold mb-3">Contacto</h6>
-                        <p class="small mb-1"><i class="bi bi-geo-alt me-2"></i> Mérida, España</p>
-                        <p class="small mb-1"><i class="bi bi-envelope me-2"></i> info@rebextech.es</p>
-                        <div class="mt-3">
-                            <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="text-white me-3"><i class="bi bi-twitter-x"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <hr class="my-4 opacity-25">
-                <div class="text-center small opacity-50">&copy; 2026 RebexTech. Todos los derechos reservados.</div>
-            </div>
-        </footer>
-        
-        
-        
-        
-        
-
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header text-white modal-header-rebex">
-                        <h5 class="modal-title fw-bold">Acceso Clientes</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <form action="LoginController" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email</label>
-                                <input type="email" name="email" class="form-control form-control-rebex" required>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Contraseña</label>
-                                <input type="password" name="password" class="form-control form-control-rebex" required>
-                            </div>
-                            <button type="submit" class="btn btn-rebex w-100 py-2 fw-bold">ENTRAR</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-center border-0">
-                        <p class="small">¿No tienes cuenta? 
-                            <a href="#" class="text-morado fw-bold text-decoration-none" 
-                               data-bs-toggle="modal" data-bs-target="#registroModal">Regístrate aquí</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="registroModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content border-0 overflow-hidden shadow-lg">
-                    <div class="row g-0">
-                        <div class="col-lg-4 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 sidebar-registro-gradient">
-                            <img src="IMAGENES/LogoRebexTech.png" alt="Logo" class="logo-sidebar-size">
-                            <h3 class="mt-4 fw-bold">¡Únete a la élite!</h3>
-                        </div>
-                        <div class="col-lg-8 bg-white p-4 p-md-5">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="fw-bold mb-0">Formulario de Registro</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <form action="RegistroController" method="POST">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold">Email</label>
-                                        <input type="email" name="email" class="form-control form-control-rebex" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold">Contraseña</label>
-                                        <input type="password" name="password" class="form-control form-control-rebex" required>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold">NIF</label>
-                                        <input type="text" name="nif" maxlength="9" class="form-control form-control-rebex" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold">Nombre</label>
-                                        <input type="text" name="nombre" class="form-control form-control-rebex" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold">Apellidos</label>
-                                        <input type="text" name="apellidos" class="form-control form-control-rebex" required>
-                                    </div>
-                                </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold">Dirección</label>
-                                        <input type="text" name="direccion" class="form-control form-control-rebex" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small fw-bold">C. Postal</label>
-                                        <input type="text" name="codigo_postal" maxlength="5" class="form-control form-control-rebex" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small fw-bold">Teléfono</label>
-                                        <input type="text" name="telefono" maxlength="9" class="form-control form-control-rebex">
-                                    </div>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-rebex btn-lg fw-bold">CREAR CUENTA</button>
-                                    <button type="button" class="btn btn-link text-muted small" 
-                                            data-bs-toggle="modal" data-bs-target="#loginModal">¿Ya tienes cuenta? Inicia sesión</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <jsp:include page="/INCLUDE/pie.inc" />
+        <jsp:include page="/INCLUDE/modal.inc" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
