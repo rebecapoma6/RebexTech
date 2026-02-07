@@ -32,6 +32,10 @@
         <servlet-name>CatalogoController</servlet-name>
         <servlet-class>es.rebextech.controllers.CatalogoController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FrontController</servlet-name>
+        <servlet-class>es.rebextech.controllers.FrontController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegistroController</servlet-name>
         <url-pattern>/RegistroController</url-pattern>
@@ -47,6 +51,10 @@
     <servlet-mapping>
         <servlet-name>CatalogoController</servlet-name>
         <url-pattern>/CatalogoController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FrontController</servlet-name>
+        <url-pattern>/FrontController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

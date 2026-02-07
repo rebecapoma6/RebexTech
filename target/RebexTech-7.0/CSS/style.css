@@ -28,6 +28,29 @@
     z-index: 1050;    /* Un poco más alto para que siempre esté sobre el Hero */
 }
 
+/* Color morado para el icono del carrito */
+.icono-carrito-rebex i {
+    color: var(--morado-rebex);
+}
+
+.tamano-badge-carrito {
+    font-size: 0.65rem !important;
+}
+
+/* Estilo para el menú desplegable del usuario logueado */
+.dropdown-item:hover {
+    background-color: var(--morado-rebex);
+    color: white !important;
+}
+
+.dropdown-item i {
+    color: var(--morado-rebex);
+}
+
+.dropdown-item:hover i {
+    color: white;
+}
+
 .form-control-rebex {
     background-color: var(--gris-input);
     border: 1px solid #ccc;
