@@ -1,3 +1,5 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
   <footer class="footer-rebex text-white py-5">
             <div class="container">
                 <div class="row">
@@ -6,16 +8,16 @@
                         <p class="small opacity-75">Tu tienda de confianza para el montaje de PCs personalizados.</p>
                     </div>
                     <div class="col-md-4 mb-4 text-center">
-                        <h6 class="fw-bold mb-3">Enlaces R√°pidos</h6>
+                        <h6 class="fw-bold mb-3">Enlaces R·pidos</h6>
                         <ul class="list-unstyled small">
                             <li><a href="#" class="text-white-50 text-decoration-none">Inicio</a></li>
-                            <li><a href="#ventas" class="text-white-50 text-decoration-none">Lo m√°s vendido</a></li>
+                            <li><a href="#ventas" class="text-white-50 text-decoration-none">Lo m·s vendido</a></li>
                             <li><a href="#sobre-nosotros" class="text-white-50 text-decoration-none">Nosotros</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4 mb-4 text-md-end">
                         <h6 class="fw-bold mb-3">Contacto</h6>
-                        <p class="small mb-1"><i class="bi bi-geo-alt me-2"></i> M√©rida, Espa√±a</p>
+                        <p class="small mb-1"><i class="bi bi-geo-alt me-2"></i> MÈrida, EspaÒa</p>
                         <p class="small mb-1"><i class="bi bi-envelope me-2"></i> info@rebextech.es</p>
                         <div class="mt-3">
                             <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>

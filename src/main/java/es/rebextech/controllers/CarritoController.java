@@ -1,6 +1,10 @@
 package es.rebextech.controllers;
 
+import es.rebextech.DAO.ProductoDAO;
+import es.rebextech.beans.Producto;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -23,45 +27,66 @@ public class CarritoController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession sesion = request.getSession();
         String accionCarrito = request.getParameter("accionCarrito");
         String idProducto = request.getParameter("idProducto");
         String urlDestino = "/CARRITO/carrito.jsp";
 
-        // 2. LÓGICA DE AGREGAR (Si accionCarrito == "agregar")
-        if ("agregar".equals(accionCarrito) && idProducto != null) {
-            if (sesion.getAttribute("usuarioSesion") == null) {
-                // USUARIO ANÓNIMO: Guardamos en Cookie (PDF)
-                Cookie cookieCarrito = new Cookie("carritoRebex", idProducto);
-                cookieCarrito.setMaxAge(60 * 60 * 24 * 7); // 1 semana
-                cookieCarrito.setPath("/");
-                response.addCookie(cookieCarrito);
-            } else {
-                // USUARIO REGISTRADO: Aquí irá tu lógica de sesión más adelante
-            }
-        }
-
-        // 3. LÓGICA DE VISUALIZACIÓN
-        // Comprobamos si hay algo para mostrar "Carrito Vacío" correctamente
-        boolean vacio = true;
+        // 1. RECUPERAR DATOS ACTUALES DE LA COOKIE
+        String datosCarrito = "";
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if ("carritoRebex".equals(c.getName())) {
-                    vacio = false;
-                    request.setAttribute("itemsCarritoCookie", c.getValue());
+                    datosCarrito = c.getValue();
                     break;
                 }
             }
         }
 
-        // Si hay sesión de usuario, también comprobamos el carrito de sesión
-        if (sesion.getAttribute("carritoSesion") != null) {
-            vacio = false;
+        // 2. LÓGICA DE AGREGAR
+        if ("agregar".equals(accionCarrito) && idProducto != null) {
+            if (sesion.getAttribute("usuarioSesion") == null) {
+                // Actualizamos la cadena local antes de guardarla
+                if (datosCarrito.isEmpty()) {
+                    datosCarrito = idProducto;
+                } else {
+                    datosCarrito += "-" + idProducto;
+                }
+
+                Cookie cookieCarrito = new Cookie("carritoRebex", datosCarrito);
+                cookieCarrito.setMaxAge(60 * 60 * 24 * 7);
+                cookieCarrito.setPath("/");
+                response.addCookie(cookieCarrito);
+
+                int totalItems = datosCarrito.split("-").length;
+                sesion.setAttribute("cantidadProductos", totalItems);
+            }
+            // Nota: Aquí podrías añadir la lógica para usuarios logueados (BD directa)
         }
 
+        // 3. CARGA DE DATOS PARA LA VISTA (Independientemente de si agregamos o solo miramos)
+        if (!datosCarrito.isEmpty()) {
+            String[] ids = datosCarrito.split("-");
+            ProductoDAO pDAO = new ProductoDAO();
+
+            List<Producto> listaProductos = pDAO.getProductosCarrito(ids);
+
+            double total = 0;
+            for (Producto p : listaProductos) {
+                total += p.getPrecio();
+            }
+
+            request.setAttribute("listaProductos", listaProductos);
+            request.setAttribute("totalPrecio", total);
+        }
+
+        // 4. LÓGICA DE VISUALIZACIÓN
+        boolean vacio = datosCarrito.isEmpty() && sesion.getAttribute("carritoSesion") == null;
+        request.setAttribute("itemsCarritoCookie", datosCarrito);
         request.setAttribute("carritoVacio", vacio);
+
         request.getRequestDispatcher(urlDestino).forward(request, response);
 
     }

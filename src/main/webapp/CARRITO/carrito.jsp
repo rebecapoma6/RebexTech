@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="imgBase" value="${pageContext.request.contextPath}/IMAGENES/productos" />
 <c:set var="estilo" value="${pageContext.request.contextPath}/CSS/style.css" />
 
 <!DOCTYPE html>
@@ -11,7 +12,7 @@
     </head>
     <body>
         <jsp:include page="/INCLUDE/navbar.jsp" />
-        
+
         <div class="container my-5 pt-5">
             <h2 class="fw-bold mb-4 section-title-rebex">TU CARRITO DE COMPRAS</h2>
 
@@ -29,9 +30,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="small opacity-75" colspan="5">Tu carrito está vacío actualmente.</td>
-                                </tr>
+                                <c:choose>
+                                    <%-- Si el controlador nos dice que está vacío, mostramos el aviso --%>
+                                    <c:when test="${empty itemsCarritoCookie && empty sessionScope.carritoSesion}">
+                                        <tr>
+                                            <td class="small opacity-75 text-center" colspan="5">
+                                                Tu carrito está vacío actualmente.
+                                            </td>
+                                        </tr>
+                                    </c:when>
+
+                                    <%-- Si NO está vacío, mostramos los productos (de momento los IDs de la cookie) --%>
+                                    <c:otherwise>
+                                        <c:forEach var="p" items="${listaProductos}">
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <%-- Mostramos la imagen y el nombre real --%>
+                                                        <img src="${imgBase}/${p.imagen}" width="50" class="me-3">
+                                                        <span class="fw-bold">${p.nombre}</span>
+                                                    </div>
+                                                </td>
+                                                <td>${p.precio}€</td>
+                                                <td>1</td>
+                                                <td>${p.precio}€</td>
+                                                <td>
+                                                    <a href="CarritoController?accion=eliminar&id=${p.idproducto}" class="text-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
                             </tbody>
                         </table>
                     </div>
@@ -72,9 +103,9 @@
                 </div>
             </div>
         </div>
-                        
-        <jsp:include page="/INCLUDE/pie.inc" />
-        <jsp:include page="/INCLUDE/modal.inc" />
+
+        <jsp:include page="/INCLUDE/pie.jsp" />
+        <jsp:include page="/INCLUDE/modal.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>

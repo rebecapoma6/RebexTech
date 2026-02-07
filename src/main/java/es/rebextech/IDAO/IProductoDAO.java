@@ -11,7 +11,7 @@ public interface IProductoDAO {
 
     public List<Producto> getProductos();
 
-    public Producto getProductoById(short idproducto);
+    public List<Producto> getProductosCarrito(String[] ids);
     
     public List<Producto> getProductosAleatorios(int cantidad);
 }

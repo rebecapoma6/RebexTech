@@ -21,8 +21,38 @@ public class ProductoDAO implements IProductoDAO {
     }
 
     @Override
-    public Producto getProductoById(short idproducto) {
-        return null;
+    public List<Producto> getProductosCarrito(String[] ids) {
+        List<Producto> lista = new ArrayList<>();
+        if (ids == null || ids.length == 0) {
+            return lista;
+        }
+
+        // Creamos una consulta dinámica: SELECT * FROM productos WHERE idproducto IN (14, 36, 25)
+        StringBuilder sql = new StringBuilder("SELECT * FROM productos WHERE idproducto IN (");
+        for (int i = 0; i < ids.length; i++) {
+            sql.append(ids[i]).append(i < ids.length - 1 ? "," : "");
+        }
+        sql.append(")");
+
+        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setIdproducto(rs.getShort("idproducto"));
+                p.setNombre(rs.getString("nombre"));
+                p.setPrecio(rs.getDouble("precio"));
+
+                String imgBD = rs.getString("imagen");
+                if (imgBD != null && !imgBD.toLowerCase().endsWith(".jpg")) {
+                    imgBD += ".jpg";
+                }
+                p.setImagen(imgBD);
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 
     @Override

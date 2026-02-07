@@ -1,3 +1,4 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg">
@@ -12,16 +13,16 @@
                                 <input type="email" name="email" class="form-control form-control-rebex" required>
                             </div>
                             <div class="mb-4">
-                                <label class="form-label fw-bold">ContraseÃ±a</label>
+                                <label class="form-label fw-bold">Contraseña</label>
                                 <input type="password" name="password" class="form-control form-control-rebex" required>
                             </div>
                             <button type="submit" class="btn btn-rebex w-100 py-2 fw-bold">ENTRAR</button>
                         </form>
                     </div>
                     <div class="modal-footer justify-content-center border-0">
-                        <p class="small">Â¿No tienes cuenta? 
+                        <p class="small">¿No tienes cuenta? 
                             <a href="#" class="text-morado fw-bold text-decoration-none" 
-                               data-bs-toggle="modal" data-bs-target="#registroModal">RegÃ­strate aquÃ­</a>
+                               data-bs-toggle="modal" data-bs-target="#registroModal">Regístrate aquí</a>
                         </p>
                     </div>
                 </div>
@@ -34,7 +35,7 @@
                     <div class="row g-0">
                         <div class="col-lg-4 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 sidebar-registro-gradient">
                             <img src="IMAGENES/LogoRebexTech.png" alt="Logo" class="logo-sidebar-size">
-                            <h3 class="mt-4 fw-bold">Â¡Ãšnete a la Ã©lite!</h3>
+                            <h3 class="mt-4 fw-bold">¡Únete a la élite!</h3>
                         </div>
                         <div class="col-lg-8 bg-white p-4 p-md-5">
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -48,7 +49,7 @@
                                         <input type="email" name="email" class="form-control form-control-rebex" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label small fw-bold">ContraseÃ±a</label>
+                                        <label class="form-label small fw-bold">Contraseña</label>
                                         <input type="password" name="password" class="form-control form-control-rebex" required>
                                     </div>
                                 </div>
@@ -68,7 +69,7 @@
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-md-6">
-                                        <label class="form-label small fw-bold">DirecciÃ³n</label>
+                                        <label class="form-label small fw-bold">Dirección</label>
                                         <input type="text" name="direccion" class="form-control form-control-rebex" required>
                                     </div>
                                     <div class="col-md-3">
@@ -76,14 +77,14 @@
                                         <input type="text" name="codigo_postal" maxlength="5" class="form-control form-control-rebex" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="form-label small fw-bold">TelÃ©fono</label>
+                                        <label class="form-label small fw-bold">Teléfono</label>
                                         <input type="text" name="telefono" maxlength="9" class="form-control form-control-rebex">
                                     </div>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-rebex btn-lg fw-bold">CREAR CUENTA</button>
                                     <button type="button" class="btn btn-link text-muted small" 
-                                            data-bs-toggle="modal" data-bs-target="#loginModal">Â¿Ya tienes cuenta? Inicia sesiÃ³n</button>
+                                            data-bs-toggle="modal" data-bs-target="#loginModal">¿Ya tienes cuenta? Inicia sesión</button>
                                 </div>
                             </form>
                         </div>

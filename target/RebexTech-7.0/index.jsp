@@ -125,8 +125,8 @@
             </div>
         </section>
 
-        <jsp:include page="/INCLUDE/pie.inc" />
-        <jsp:include page="/INCLUDE/modal.inc" />
+        <jsp:include page="/INCLUDE/pie.jsp" />
+        <jsp:include page="/INCLUDE/modal.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
