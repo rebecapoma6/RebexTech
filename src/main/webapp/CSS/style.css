@@ -1,0 +1,198 @@
+:root {
+    --morado-rebex: #5B3063;
+    --gris-input: #D9D9D9;
+    --negro-fondo: #1A1A1A; 
+    --blanco-puro: #FFFFFF;
+}
+
+/* --- LOGO FLOTANTE --- */
+.logo-rebex {
+    height: 140px; 
+    width: auto;
+    position: absolute; 
+    top: -5vh; 
+    left: 20px;
+    z-index: 1100; 
+    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.4));
+    transition: transform 0.2s ease-in-out;
+}
+
+.logo-rebex:hover { transform: scale(1.05); }
+
+/* --- NAVBAR --- */
+.navbar {
+    position: fixed;
+    top: 0;           /* Asegura que inicie arriba del todo */
+    width: 100%;      /* Forza el ancho completo de la pantalla */
+    min-height: 80px;
+    z-index: 1050;    /* Un poco más alto para que siempre esté sobre el Hero */
+}
+
+.form-control-rebex {
+    background-color: var(--gris-input);
+    border: 1px solid #ccc;
+}
+
+/* --- HERO REBEX --- */
+#heroRebex {
+    width: 100%;
+    clear: both;
+    margin-top: 80px;
+}
+
+/* Clases de utilidad para el Hero (Sustituyen los style inline) */
+.hero-height {
+    height: 500px;
+}
+
+.hero-bg-dark {
+    background-color: #1A1A1A;
+}
+
+.hero-bg-gradient {
+    background: linear-gradient(45deg, #1a1a1a, var(--morado-rebex));
+}
+
+/* Dimensiones exactas de las imágenes del Hero */
+.hero-img-size {
+    height: 300px;
+    width: 350px;
+    object-fit: contain;
+}
+
+.hero-img-shadow {
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+}
+
+.floating-img {
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* --- PRODUCTOS --- */
+.card-producto { transition: transform 0.3s ease; }
+.card-producto:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.img-producto-landing { height: 180px; object-fit: contain; }
+
+/* Título de sección con borde morado */
+.section-title-rebex {
+    border-left: 5px solid var(--morado-rebex);
+    padding-left: 15px;
+}
+
+/* --- SOBRE NOSOTROS --- */
+.img-nosotros {
+    height: 400px; 
+    width: 100%;
+    object-fit: cover; 
+}
+
+.decoracion-morada {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: var(--morado-rebex);
+    z-index: -1;
+    border-radius: 20px;
+    transform: translateX(-50%);
+}
+
+.text-morado {
+    color: var(--morado-rebex);
+}
+
+/* --- CARRUSEL MARCAS --- */
+.logo-slider {
+    width: 100%;
+    overflow: hidden; 
+    padding: 60px 0;
+    background: white;
+    position: relative;
+}
+
+.logo-slide-track {
+    display: flex;
+    width: calc(250px * 12); 
+    animation: scroll-infinito 25s linear infinite;
+}
+
+.slide {
+    width: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide img {
+    height: 50px; 
+    filter: grayscale(100%);
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+.slide:hover img { filter: grayscale(0%); opacity: 1; }
+
+/* --- FOOTER --- */
+.footer-rebex {
+    background-color: var(--negro-fondo);
+}
+
+.footer-rebex a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+
+.footer-rebex a:hover {
+    color: white;
+}
+
+.footer-rebex i {
+    font-size: 1.2rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.footer-rebex i:hover {
+    transform: scale(1.15);
+}
+
+@keyframes scroll-infinito {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-250px * 6)); }
+}
+
+/* --- COMPONENTES Y MODALES --- */
+.btn-rebex { 
+    background-color: var(--morado-rebex); 
+    color: white; 
+    font-weight: bold; 
+}
+
+.btn-rebex:hover { 
+    background-color: #45244b; 
+    color: white; 
+}
+
+.modal-header-rebex {
+    background-color: var(--morado-rebex);
+}
+
+/* Estilos Sidebar Registro */
+.sidebar-registro-gradient { 
+    background: linear-gradient(135deg, var(--morado-rebex), #2a162e); 
+}
+
+.logo-sidebar-size { 
+    width: 150px; 
+    filter: brightness(0) invert(1); 
+}

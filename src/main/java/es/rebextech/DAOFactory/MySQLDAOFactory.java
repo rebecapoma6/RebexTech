@@ -1,0 +1,38 @@
+
+package es.rebextech.DAOFactory;
+
+import es.rebextech.DAO.CategoriaDAO;
+import es.rebextech.DAO.PedidoDAO;
+import es.rebextech.DAO.ProductoDAO;
+import es.rebextech.DAO.UsuarioDAO;
+import es.rebextech.IDAO.DAOFactory;
+import es.rebextech.IDAO.ICategoriaDAO;
+import es.rebextech.IDAO.IPedidoDAO;
+import es.rebextech.IDAO.IProductoDAO;
+import es.rebextech.IDAO.IUsuarioDAO;
+
+/**
+ *
+ * @author User
+ */
+public class MySQLDAOFactory extends DAOFactory{
+    @Override
+    public IUsuarioDAO getUsuarioDAO() {
+        return new UsuarioDAO();
+    }
+
+    @Override
+    public IProductoDAO getProductoDAO() {
+        return new ProductoDAO();
+    }
+
+    @Override
+    public ICategoriaDAO getCategoriaDAO() {
+        return new CategoriaDAO();
+    }
+
+    @Override
+    public IPedidoDAO getPedidoDAO() {
+        return new PedidoDAO();
+    }
+}
