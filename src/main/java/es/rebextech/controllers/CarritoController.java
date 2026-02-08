@@ -3,7 +3,6 @@ package es.rebextech.controllers;
 import es.rebextech.DAO.ProductoDAO;
 import es.rebextech.beans.Producto;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -45,32 +44,53 @@ public class CarritoController extends HttpServlet {
             }
         }
 
-        // 2. LÓGICA DE AGREGAR
+        // 2. GESTIÓN DEL CARRITO 
+        // A. Acción: Añadir producto
         if ("agregar".equals(accionCarrito) && idProducto != null) {
             if (sesion.getAttribute("usuarioSesion") == null) {
-                // Actualizamos la cadena local antes de guardarla
                 if (datosCarrito.isEmpty()) {
                     datosCarrito = idProducto;
                 } else {
                     datosCarrito += "-" + idProducto;
                 }
-
-                Cookie cookieCarrito = new Cookie("carritoRebex", datosCarrito);
-                cookieCarrito.setMaxAge(60 * 60 * 24 * 7);
-                cookieCarrito.setPath("/");
-                response.addCookie(cookieCarrito);
-
-                int totalItems = datosCarrito.split("-").length;
-                sesion.setAttribute("cantidadProductos", totalItems);
             }
-            // Nota: Aquí podrías añadir la lógica para usuarios logueados (BD directa)
+        } // B. Acción: Eliminar un producto específico
+        else if ("eliminar".equals(accionCarrito) && idProducto != null) {
+            String[] ids = datosCarrito.split("-");
+            StringBuilder nuevaCadena = new StringBuilder();
+            for (String id : ids) {
+                if (!id.equals(idProducto)) {
+                    if (nuevaCadena.length() > 0) {
+                        nuevaCadena.append("-");
+                    }
+                    nuevaCadena.append(id);
+                }
+            }
+            datosCarrito = nuevaCadena.toString();
+        } // C. Acción: Eliminar el carro entero 
+        else if ("vaciar".equals(accionCarrito)) {
+            datosCarrito = "";
         }
 
-        // 3. CARGA DE DATOS PARA LA VISTA (Independientemente de si agregamos o solo miramos)
+        // 3. ACTUALIZAR COOKIE Y CONTADOR 
+        Cookie cookieCarrito = new Cookie("carritoRebex", datosCarrito);
+        cookieCarrito.setPath("/");
+
+        if (datosCarrito.isEmpty()) {
+            cookieCarrito.setMaxAge(0); // Borramos la cookie del navegador
+            sesion.setAttribute("cantidadProductos", 0);
+        } else {
+            // El carrito perdurará durante dos días
+            cookieCarrito.setMaxAge(60 * 60 * 24 * 2);
+            int totalItems = datosCarrito.split("-").length;
+            sesion.setAttribute("cantidadProductos", totalItems);
+        }
+        response.addCookie(cookieCarrito);
+
+        // 4. CARGA DE DATOS PARA LA VISTA 
         if (!datosCarrito.isEmpty()) {
             String[] ids = datosCarrito.split("-");
             ProductoDAO pDAO = new ProductoDAO();
-
             List<Producto> listaProductos = pDAO.getProductosCarrito(ids);
 
             double total = 0;
@@ -82,13 +102,10 @@ public class CarritoController extends HttpServlet {
             request.setAttribute("totalPrecio", total);
         }
 
-        // 4. LÓGICA DE VISUALIZACIÓN
-        boolean vacio = datosCarrito.isEmpty() && sesion.getAttribute("carritoSesion") == null;
+        // 5. LÓGICA DE VISUALIZACIÓN
         request.setAttribute("itemsCarritoCookie", datosCarrito);
-        request.setAttribute("carritoVacio", vacio);
-
+        request.setAttribute("carritoVacio", datosCarrito.isEmpty());
         request.getRequestDispatcher(urlDestino).forward(request, response);
-
     }
 
     @Override

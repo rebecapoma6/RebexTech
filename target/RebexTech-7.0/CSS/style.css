@@ -219,3 +219,28 @@
     width: 150px; 
     filter: brightness(0) invert(1); 
 }
+/* Variante para iconos de acción en tablas */
+.btn-outline-rebex {
+    color: var(--morado-rebex);
+    border: 1px solid var(--morado-rebex);
+    transition: 0.3s;
+}
+
+.btn-outline-rebex:hover {
+    background-color: var(--morado-rebex);
+    color: white;
+}
+
+/* Color para el botón cancelar del modal */
+.btn-gris-rebex {
+/*    background-color: #6c757d;*/
+    background-color: var(--morado-rebex);
+    color: white;
+    font-weight: bold;
+}
+
+.btn-rebex-confirm{
+     background-color: #6c757d;
+    color: white;
+    font-weight: bold;
+}

@@ -1,5 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 <c:set var="imgBase" value="${pageContext.request.contextPath}/IMAGENES/productos" />
 <c:set var="estilo" value="${pageContext.request.contextPath}/CSS/style.css" />
 
@@ -55,16 +56,49 @@
                                                 <td>1</td>
                                                 <td>${p.precio}€</td>
                                                 <td>
-                                                    <a href="CarritoController?accion=eliminar&id=${p.idproducto}" class="text-danger">
+<!--                                                    <a href="${baseUrl}/FrontController?accion=verCarrito&accionCarrito=eliminar&idProducto=${p.idproducto}" 
+                                                       class="btn btn-sm btn-outline-danger">
                                                         <i class="bi bi-trash"></i>
-                                                    </a>
+                                                    </a>-->
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-outline-rebex border-0" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#confirmarEliminar${p.idproducto}">
+                                                        <i class="bi bi-trash fs-5"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
-                                        </c:forEach>
-                                    </c:otherwise>
-                                </c:choose>
+                                        <div class="modal fade" id="confirmarEliminar${p.idproducto}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content modal-content-rebex shadow-lg border-0">
+                                                    <div class="modal-header modal-rebex-header">
+                                                        <h5 class="modal-title small fw-bold text-uppercase tracking-wider">Quitar Producto</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body py-5 text-center bg-white">
+                                                        <p class="fs-5 mb-0">¿Seguro que quieres eliminar <br><strong class="text-morado-claro">${p.nombre}</strong>?</p>
+                                                    </div>
+                                                    <div class="modal-footer border-0 bg-light justify-content-center">
+                                                        <button type="button" class="btn btn-sm btn-gris-rebex px-4" data-bs-dismiss="modal">CANCELAR</button>
+                                                        <a href="${baseUrl}/FrontController?accion=verCarrito&accionCarrito=eliminar&idProducto=${p.idproducto}" 
+                                                           class="btn btn-sm btn-rebex-confirm px-4 shadow-sm">ELIMINAR</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </c:forEach>
+                                </c:otherwise>
+                            </c:choose>
+
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-rebex px-4 mt-3 text-uppercase shadow-sm" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#confirmarVaciar">
+                            Vaciar Carrito
+                        </button>
+
                     </div>
                 </div>
 
@@ -89,7 +123,7 @@
                             <c:when test="${empty sessionScope.usuarioSesion}">
                                 <%-- Si es anónimo, el botón abre el modal de login que está en index.jsp --%>
                                 <button class="btn btn-rebex w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                    IDENTÍFICATE PARA COMPRAR
+                                    PAGAR
                                 </button>
                             </c:when>
                             <c:otherwise>
@@ -99,6 +133,28 @@
                                 </a>
                             </c:otherwise>
                         </c:choose>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="confirmarVaciar" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-content-rebex shadow-lg border-0">
+                    <div class="modal-header modal-rebex-header">
+                        <h5 class="modal-title small fw-bold text-uppercase tracking-wider">Vaciar todo el carrito</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body py-5 text-center bg-white">
+                        <div class="mb-3">
+                            <i class="bi bi-cart-x text-morado-claro display-2"></i>
+                        </div>
+                        <p class="fs-5">¿Estás seguro de que quieres borrar <br><strong>todos tus productos</strong>?</p>
+                    </div>
+                    <div class="modal-footer border-0 bg-light justify-content-center">
+                        <button type="button" class="btn btn-sm btn-gris-rebex px-4 text-uppercase" data-bs-dismiss="modal">Mantener compra</button>
+                        <a href="${baseUrl}/FrontController?accion=verCarrito&accionCarrito=vaciar" 
+                           class="btn btn-sm btn-rebex-confirm px-4 shadow-sm text-uppercase">Sí, vaciar todo</a>
                     </div>
                 </div>
             </div>
