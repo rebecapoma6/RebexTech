@@ -63,12 +63,20 @@
                             <div class="card-body d-flex flex-column pt-3">
                                 <small class="text-uppercase text-muted fw-bold">${p.marca}</small>
                                 <h5 class="card-title h6 fw-bold text-dark">${p.nombre}</h5>
-                                <div class="mt-auto d-flex justify-content-between align-items-end">
-                                    <p class="text-primary fs-5 fw-bold mb-0">${p.precio}€</p>
-                                    <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${p.idproducto}" 
-                                       class="btn btn-rebex rounded-3">
-                                        <i class="bi bi-cart-plus-fill"></i>
-                                    </a>
+                                <div class="mt-auto">
+                                    <p class="text-primary fs-5 fw-bold mb-2">${p.precio}€</p>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalDetalles${p.idproducto}">
+                                            DETALLES
+                                        </button>
+
+                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${p.idproducto}" 
+                                           class="btn btn-rebex rounded-3">
+                                            <i class="bi bi-cart-plus-fill"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -124,6 +132,8 @@
                     </c:forEach>
             </div>
         </section>
+        
+        
 
         <jsp:include page="/INCLUDE/pie.jsp" />
         <jsp:include page="/INCLUDE/modal.jsp" />

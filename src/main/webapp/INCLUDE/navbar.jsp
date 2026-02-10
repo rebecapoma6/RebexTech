@@ -8,10 +8,18 @@
                  alt="RebexTech" 
                  class="logo-rebex">
         </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
+            <form class="d-flex mx-auto w-50" action="${pageContext.request.contextPath}/FrontController" method="GET">
+                <input type="hidden" name="accion" value="buscar">
+                <input class="form-control me-2 form-control-rebex" type="search" name="busqueda" placeholder="Buscar componentes...">
+                <button class="btn btn-rebex" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item me-3">
                     <a class="nav-link position-relative icono-carrito-rebex" href="${pageContext.request.contextPath}/FrontController?accion=verCarrito">
@@ -37,6 +45,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/perfil.jsp">Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/FrontController?accion=verPedidos">Mis Pedidos</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/FrontController?accion=salir">Cerrar Sesión</a>

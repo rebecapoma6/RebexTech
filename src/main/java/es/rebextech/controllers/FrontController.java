@@ -30,7 +30,7 @@ public class FrontController extends HttpServlet {
             switch (accionSolicitada) {
                 
                 case "verCarrito":
-                    // Acceso libre para todos (Anónimos y Registrados) como pide tu PDF
+                 
                     urlDestino = "CarritoController";
                     break;
 

@@ -31,9 +31,10 @@ public class CarritoController extends HttpServlet {
         String accionCarrito = request.getParameter("accionCarrito");
         String idProducto = request.getParameter("idProducto");
         String urlDestino = "/CARRITO/carrito.jsp";
-
-        // 1. RECUPERAR DATOS ACTUALES DE LA COOKIE
         String datosCarrito = "";
+        
+        
+        // 1. RECUPERAR DATOS ACTUALES DE LA COOKIE
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -44,7 +45,7 @@ public class CarritoController extends HttpServlet {
             }
         }
 
-        // 2. GESTIÓN DEL CARRITO 
+  
         // A. Acción: Añadir producto
         if ("agregar".equals(accionCarrito) && idProducto != null) {
             if (sesion.getAttribute("usuarioSesion") == null) {
@@ -72,7 +73,7 @@ public class CarritoController extends HttpServlet {
             datosCarrito = "";
         }
 
-        // 3. ACTUALIZAR COOKIE Y CONTADOR 
+        // . ACTUALIZAR COOKIE Y CONTADOR 
         Cookie cookieCarrito = new Cookie("carritoRebex", datosCarrito);
         cookieCarrito.setPath("/");
 
@@ -87,7 +88,7 @@ public class CarritoController extends HttpServlet {
         }
         response.addCookie(cookieCarrito);
 
-        // 4. CARGA DE DATOS PARA LA VISTA 
+        // . CARGA DE DATOS PARA LA VISTA 
         if (!datosCarrito.isEmpty()) {
             String[] ids = datosCarrito.split("-");
             ProductoDAO pDAO = new ProductoDAO();
