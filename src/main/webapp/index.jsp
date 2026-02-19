@@ -54,25 +54,25 @@
                 <h2 class="fw-bold m-0 section-title-rebex">LOS MÁS VENDIDOS</h2>
             </div>
             <div class="row g-4">
-                <c:forEach var="p" items="${applicationScope.productosLanding}">
+                <c:forEach var="produ" items="${productosLanding}">
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm card-producto">
                             <div class="p-4 bg-light text-center">
-                                <img src="${imgBase}/${p.imagen}" alt="${p.nombre}" class="img-fluid img-producto-landing">
+                                <img src="${imgBase}/${produ.imagen}" alt="${produ.nombre}" class="img-fluid img-producto-landing">
                             </div>
                             <div class="card-body d-flex flex-column pt-3">
-                                <small class="text-uppercase text-muted fw-bold">${p.marca}</small>
-                                <h5 class="card-title h6 fw-bold text-dark">${p.nombre}</h5>
+                                <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
+                                <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
                                 <div class="mt-auto">
-                                    <p class="text-primary fs-5 fw-bold mb-2">${p.precio}€</p>
+                                    <p class="text-primary fs-5 fw-bold mb-2">${produ.precio}€</p>
                                     <div class="d-flex gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
                                                 data-bs-toggle="modal" 
-                                                data-bs-target="#modalDetalles${p.idproducto}">
+                                                data-bs-target="#modalDetalles${produ.idproducto}">
                                             DETALLES
                                         </button>
 
-                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${p.idproducto}" 
+                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${produ.idproducto}" 
                                            class="btn btn-rebex rounded-3">
                                             <i class="bi bi-cart-plus-fill"></i>
                                         </a>

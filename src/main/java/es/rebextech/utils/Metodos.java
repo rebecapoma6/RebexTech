@@ -1,14 +1,21 @@
 package es.rebextech.utils;
 
+import es.rebextech.DAO.ConnectionFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author User
  */
 public class Metodos {
-    
+
     public static String encriptar(String cadena) {
         if (cadena == null) {
             return null;
@@ -27,7 +34,6 @@ public class Metodos {
         }
     }
 
-   
     public static String capitalizar(String texto) {
         if (texto == null || texto.trim().isEmpty()) {
             return texto;
@@ -39,10 +45,42 @@ public class Metodos {
         for (String palabra : palabras) {
             if (palabra.length() > 0) {
                 resultado.append(palabra.substring(0, 1).toUpperCase())
-                         .append(palabra.substring(1).toLowerCase())
-                         .append(" ");
+                        .append(palabra.substring(1).toLowerCase())
+                        .append(" ");
             }
         }
         return resultado.toString().trim();
+    }
+
+    public static void configurarAlerta(HttpSession session, String mensajeAlerta, String tipoAlerta) {
+        session.setAttribute("alerta", mensajeAlerta);
+        session.setAttribute("tipoAlerta", tipoAlerta);
+    }
+
+    public static void eliminarCookieCarrito(HttpServletResponse response) {
+        Cookie cookieBorrar = new Cookie("carritoRebex", "");
+        cookieBorrar.setPath("/");
+        cookieBorrar.setMaxAge(0);
+        response.addCookie(cookieBorrar);
+    }
+
+    public static boolean esCampoVacio(String valorCampo) {
+        return (valorCampo == null || valorCampo.trim().isEmpty());
+    }
+
+    public static void cerrarRecursos(Connection con, PreparedStatement ps, ResultSet rs) {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+        } catch (Exception e) {
+        }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception e) {
+        }
+        ConnectionFactory.closeConexion(con);
     }
 }

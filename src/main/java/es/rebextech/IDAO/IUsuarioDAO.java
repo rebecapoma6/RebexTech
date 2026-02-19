@@ -8,10 +8,16 @@ import es.rebextech.beans.Usuario;
  */
 public interface IUsuarioDAO {
 
+   // Para entrar a la tienda
     public Usuario login(String email, String password);
 
-    public void registrarUsuario(Usuario usuario);
+    // El método principal de registro (donde usarás el objeto poblado por BeanUtils)
+    public int registrarUsuario(Usuario usuario);
 
-    // Este método lo usará el Servlet después de que el usuario envíe el formulario
+    // Validaciones de seguridad (El PDF suele pedir evitar duplicados)
     public boolean existeEmail(String email);
+    public boolean existeNif(String nif); // Muy útil porque el NIF es único
+
+    // Opcional: Solo si vas a permitir cambiar la foto después del registro
+    public boolean actualizarAvatar(int idUsuario, String nombreArchivo);
 }

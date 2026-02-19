@@ -9,5 +9,7 @@ import java.util.List;
  * @author User
  */
 public interface ICategoriaDAO {
-    public List<Categoria> getCategorias();
+    public List<Categoria> listarTodas();
+    
+  
 }

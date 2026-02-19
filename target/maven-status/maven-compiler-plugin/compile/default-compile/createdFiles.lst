@@ -1,6 +1,7 @@
 es\rebextech\beans\Categoria.class
 es\rebextech\DAO\ConnectionFactory.class
 es\rebextech\listener\RebexContextListener.class
+es\rebextech\controllers\UsuarioController.class
 es\rebextech\IDAO\DAOFactory.class
 es\rebextech\beans\Pedido.class
 es\rebextech\IDAO\ICategoriaDAO.class
@@ -17,7 +18,6 @@ es\rebextech\beans\Producto.class
 es\rebextech\utils\Metodos.class
 es\rebextech\controllers\RegistroController.class
 es\rebextech\beans\LineaPedido.class
-es\rebextech\controllers\LoginController.class
 es\rebextech\IDAO\IProductoDAO.class
 es\rebextech\beans\Usuario.class
 es\rebextech\DAO\PedidoDAO.class

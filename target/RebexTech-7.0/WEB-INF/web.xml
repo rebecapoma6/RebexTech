@@ -36,6 +36,10 @@
         <servlet-name>FrontController</servlet-name>
         <servlet-class>es.rebextech.controllers.FrontController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UsuarioController</servlet-name>
+        <servlet-class>es.rebextech.controllers.UsuarioController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegistroController</servlet-name>
         <url-pattern>/RegistroController</url-pattern>
@@ -56,12 +60,16 @@
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/FrontController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UsuarioController</servlet-name>
+        <url-pattern>/UsuarioController</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+    <welcome-file>FrontController</welcome-file>
+</welcome-file-list>
 </web-app>
