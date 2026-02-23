@@ -14,7 +14,20 @@ public class LineaPedido implements Serializable {
     private short idproducto;
     private byte cantidad;
 
+    private Producto producto;
+    
     public LineaPedido() {
+    }
+    
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+        if (producto != null) {
+            this.idproducto = producto.getIdproducto(); // Sincronizamos el ID
+        }
     }
 
     public short getIdlinea() {
@@ -47,5 +60,12 @@ public class LineaPedido implements Serializable {
 
     public void setCantidad(byte cantidad) {
         this.cantidad = cantidad;
+    }
+    
+    public double getSubtotal() {
+        if (this.producto != null) {
+            return this.producto.getPrecio() * this.cantidad;
+        }
+        return 0;
     }
 }

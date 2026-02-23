@@ -20,6 +20,7 @@ es\rebextech\controllers\RegistroController.class
 es\rebextech\beans\LineaPedido.class
 es\rebextech\IDAO\IProductoDAO.class
 es\rebextech\beans\Usuario.class
+es\rebextech\controllers\AjaxController.class
 es\rebextech\DAO\PedidoDAO.class
 es\rebextech\DAO\ProductoDAO.class
 es\rebextech\controllers\FrontController.class

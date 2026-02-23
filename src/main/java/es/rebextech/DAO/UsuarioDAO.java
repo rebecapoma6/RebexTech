@@ -39,31 +39,22 @@ public class UsuarioDAO implements IUsuarioDAO {
                 // Llenamos el objeto con lo que viene de la BD
                 user.setIdusuario(rs.getShort("idusuario"));
                 user.setNombre(rs.getString("nombre"));
+                user.setNif(rs.getString("nif"));
                 user.setApellidos(rs.getString("apellidos"));
                 user.setEmail(rs.getString("email"));
                 user.setTelefono(rs.getString("telefono"));
                 user.setDireccion(rs.getString("direccion"));
                 user.setLocalidad(rs.getString("localidad"));
                 user.setProvincia(rs.getString("provincia"));
+                user.setCodigo_postal(rs.getString("codigo_postal"));
                 user.setAvatar(rs.getString("avatar"));
                 // ... añade los campos que necesites mostrar en el perfil ...
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception e) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (Exception e) {
-            }
-            ConnectionFactory.closeConexion(con);
+            // ¡Usamos tu método utilitario!
+            Metodos.cerrarRecursos(con, ps, rs);
         }
         return user;
     }
@@ -108,33 +99,179 @@ public class UsuarioDAO implements IUsuarioDAO {
             System.out.println("Error al registrar usuario: " + error.getMessage());
 
         } finally {
-            // Cerramos la conexión llamando a tu fábrica para liberar el hilo
-            ConnectionFactory.closeConexion(cx);
-            // Cerramos la sentencia manualmente para mayor seguridad
-            try {
-                if (sp != null) {
-                    sp.close();
-                }
-            } catch (SQLException e) {
-            }
+            // Mandamos null en el ResultSet porque ya se cerró arriba con el try-with-resources
+            Metodos.cerrarRecursos(cx, sp, null);
         }
         return idUsuarioGenerado;
-
     }
+    
+    
+    
 
     @Override
     public boolean existeEmail(String email) {
-        // Usado para validaciones antes de registrar
-        return false;
+        boolean existe = false;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String sql = "SELECT idusuario FROM usuarios WHERE email = ?";
+
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                existe = true; // Si hay resultados, el email ya está en uso
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Metodos.cerrarRecursos(con, ps, rs);
+        }
+        return existe;
     }
 
     @Override
     public boolean actualizarAvatar(int idUsuario, String nombreArchivo) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+       boolean exito = false;
+        Connection con = null;
+        PreparedStatement ps = null;
+        
+        // La consulta para cambiar solo la ruta de la imagen
+        String sql = "UPDATE usuarios SET avatar = ? WHERE idusuario = ?";
+
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, nombreArchivo);
+            ps.setInt(2, idUsuario);
+
+            // Si se ha actualizado al menos una fila, devolvemos true
+            if (ps.executeUpdate() > 0) {
+                exito = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar avatar en DB: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // Usamos tu método de utilidades para limpiar
+            Metodos.cerrarRecursos(con, ps, null);
+        }
+        return exito;
     }
+    
+    
+    
 
     @Override
     public boolean existeNif(String nif) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        boolean existe = false;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String sql = "SELECT idusuario FROM usuarios WHERE nif = ?";
+
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, nif);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                existe = true; // Si hay resultados, el NIF ya está en uso
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Metodos.cerrarRecursos(con, ps, rs);
+        }
+        return existe;
+    }
+    
+    
+    
+
+    @Override
+    public void actualizarUltimoAcceso(int idUsuario) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        // La consulta usa NOW() para la fecha y hora actual de MySQL
+        String sql = "UPDATE usuarios SET ultimo_acceso = NOW() WHERE idusuario = ?";
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Metodos.cerrarRecursos(con, ps, null);
+        }
+    }
+
+    @Override
+    public boolean actualizarUsuario(Usuario u) {
+        boolean exito = false;
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "UPDATE usuarios SET nombre=?, apellidos=?, direccion=?, "
+               + "localidad=?, provincia=?, codigo_postal=?, telefono=?"
+               + "WHERE idusuario=?";
+
+    try {
+        con = ConnectionFactory.getConnection();
+        ps = con.prepareStatement(sql);
+        
+        
+        ps.setString(1, u.getNombre());
+        ps.setString(2, u.getApellidos());
+        ps.setString(3, u.getDireccion());
+        ps.setString(4, u.getLocalidad());
+        ps.setString(5, u.getProvincia());
+        ps.setString(6, u.getCodigo_postal());
+        ps.setString(7, u.getTelefono());
+        ps.setInt(8, u.getIdusuario());
+
+        if (ps.executeUpdate() > 0) {
+            exito = true;
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al actualizar usuario: " + e.getMessage());
+        e.printStackTrace();
+    } finally {
+        Metodos.cerrarRecursos(con, ps, null);
+    }
+    return exito;
+    }
+
+    @Override
+    public boolean cambiarPassword(int id, String nuevaPass) {
+        boolean exito = false;
+        Connection con = null;
+        PreparedStatement ps = null;
+        String sql = "UPDATE usuarios SET password=? WHERE idusuario=?";
+
+        // ¡IMPORTANTE! Cifrar antes de guardar
+        String passCifrada = Metodos.encriptar(nuevaPass);
+
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, passCifrada);
+            ps.setInt(2, id);
+
+            if (ps.executeUpdate() > 0) {
+                exito = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Metodos.cerrarRecursos(con, ps, null);
+        }
+        return exito;
     }
 }

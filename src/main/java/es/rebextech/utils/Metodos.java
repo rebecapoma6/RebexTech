@@ -68,19 +68,19 @@ public class Metodos {
         return (valorCampo == null || valorCampo.trim().isEmpty());
     }
 
-    public static void cerrarRecursos(Connection con, PreparedStatement ps, ResultSet rs) {
-        try {
-            if (rs != null) {
-                rs.close();
+        public static void cerrarRecursos(Connection con, PreparedStatement ps, ResultSet rs) {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
-        }
-        try {
-            if (ps != null) {
-                ps.close();
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
             }
-        } catch (Exception e) {
+            ConnectionFactory.closeConexion(con);
         }
-        ConnectionFactory.closeConexion(con);
-    }
 }

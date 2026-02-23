@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="imgBase" value="${pageContext.request.contextPath}/IMAGENES/productos" />
 <c:set var="estilo" value="${pageContext.request.contextPath}/CSS/style.css" />
@@ -64,7 +65,9 @@
                                 <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
                                 <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
                                 <div class="mt-auto">
-                                    <p class="text-primary fs-5 fw-bold mb-2">${produ.precio}€</p>
+                                    <p class="text-primary fs-5 fw-bold mb-2">
+                                        <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                                    </p>
                                     <div class="d-flex gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
                                                 data-bs-toggle="modal" 
@@ -72,10 +75,19 @@
                                             DETALLES
                                         </button>
 
-                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${produ.idproducto}" 
+<!--                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${produ.idproducto}" 
                                            class="btn btn-rebex rounded-3">
                                             <i class="bi bi-cart-plus-fill"></i>
-                                        </a>
+                                        </a>-->
+                                        <form action="FrontController" method="POST" style="display:inline;">
+                                            <input type="hidden" name="accion" value="verCarrito">
+                                            <input type="hidden" name="accionCarrito" value="agregar">
+                                            <input type="hidden" name="idProducto" value="${produ.idproducto}">
+
+                                            <button type="submit" class="btn btn-rebex rounded-3">
+                                                <i class="bi bi-cart-plus-fill"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -132,12 +144,15 @@
                     </c:forEach>
             </div>
         </section>
-        
-        
+
+
 
         <jsp:include page="/INCLUDE/pie.jsp" />
         <jsp:include page="/INCLUDE/modal.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/JS/validaciones.js"></script>
+
     </body>
 </html>

@@ -1,5 +1,6 @@
 package es.rebextech.IDAO;
 
+import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Producto;
 import java.util.List;
 
@@ -17,8 +18,9 @@ public interface IProductoDAO {
     
     public List<Producto> busquedalibreNavabar(String textoBusqueda);
     
-    public List<Producto> filtroavanzadoCatalogo(String texto, String idCategoria, double precioMin, double precioMax);
+    // Cambiamos String idCategoria por un Array de String o una Lista
+    public List<Producto> filtroavanzadoCatalogo(String texto, String[] idsCategorias, double precioMin, double precioMax);
     
-//    public List<Producto> getBusquedaAvanzada(String texto, String idCat, double min, double max);
+    public List<LineaPedido> getProductosCarritoBD(short idUsuario);
     
 }

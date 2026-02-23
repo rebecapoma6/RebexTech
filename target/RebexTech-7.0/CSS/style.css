@@ -189,6 +189,8 @@
     transform: scale(1.15);
 }
 
+
+
 @keyframes scroll-infinito {
     0% { transform: translateX(0); }
     100% { transform: translateX(calc(-250px * 6)); }
@@ -243,4 +245,27 @@
      background-color: #6c757d;
     color: white;
     font-weight: bold;
+}
+
+/* --- FIX NAVEGACIÓN MODALES --- */
+
+/* Subimos el nivel del modal de registro para que mande sobre el de login */
+#registroModal {
+    z-index: 1061;
+}
+
+/* Forzamos que el contenido sea interactivo aunque haya conflictos de foco */
+#registroModal .modal-content {
+    pointer-events: auto;
+}
+
+/* Aseguramos que el formulario esté por encima de cualquier capa fantasma */
+#formRegistro {
+    position: relative;
+    z-index: 1062;
+}
+
+/* Evitamos que el scroll se bloquee al saltar entre modales */
+body.modal-open {
+    overflow: hidden;
 }

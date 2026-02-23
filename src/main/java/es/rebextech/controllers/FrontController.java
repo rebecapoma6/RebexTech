@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -24,30 +25,32 @@ public class FrontController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String urlDestino = "index.jsp";
+        
         String accionSolicitada = request.getParameter("accion");
-
+        HttpSession sesion = request.getSession();
+        String urlDestino = "index.jsp";
         DAOFactory fabrica = DAOFactory.getDAOFactory();
 
+        // ============================================================
+        // EL TRUCO PARA LA URL LIMPIA (Solo añade estas 4 líneas)
+        // ============================================================
+        if (accionSolicitada == null && sesion.getAttribute("verCarritoDespues") != null) {
+            accionSolicitada = "verCarrito";
+            sesion.removeAttribute("verCarritoDespues"); 
+        }
+        // ============================================================
+
+        
+
         if ("buscar".equals(accionSolicitada)) {
-            
-            // Aquí llamarías a un método de búsqueda en tu DAO
-            // List<Producto> resultados = fabrica.getProductoDAO().buscar(textoBusqueda);
-            // request.setAttribute("productosLanding", resultados);
-            urlDestino = "CatalogoController"; // O la página donde muestres resultados
+            urlDestino = "CatalogoController"; 
 
-            // 2. CASO LANDING (Si no hay acción o es "inicio")
         } else if (accionSolicitada == null || accionSolicitada.isEmpty() || "inicio".equals(accionSolicitada)) {
-
-            // Pedimos los 12 productos aleatorios para la portada
             List<Producto> productosAlAzar = fabrica.getProductoDAO().getProductosAleatorios(12);
-
-            // Los guardamos en el REQUEST (para que cambien con cada F5)
             request.setAttribute("productosLanding", productosAlAzar);
             urlDestino = "index.jsp";
 
         } else {
-            // 3. Control de navegación para el resto de la tienda
             switch (accionSolicitada) {
                 case "verCarrito":
                     urlDestino = "CarritoController";
@@ -59,10 +62,13 @@ public class FrontController extends HttpServlet {
                 case "registro":
                     urlDestino = "RegistroController";
                     break;
-//                case "salir":
-//                    request.getSession().invalidate();
-//                    urlDestino = "index.jsp";
-//                    break;
+                // Dentro del switch de FrontController
+                case "perfil":
+                    urlDestino = "UsuarioController";
+                    break;
+                case "actualizarCantidadCarrito": // La acción que envía el fetch de JS
+                    urlDestino = "CarritoController";
+                    break;
                 default:
                     urlDestino = "index.jsp";
                     break;

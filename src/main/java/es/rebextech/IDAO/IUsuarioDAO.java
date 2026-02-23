@@ -20,4 +20,9 @@ public interface IUsuarioDAO {
 
     // Opcional: Solo si vas a permitir cambiar la foto después del registro
     public boolean actualizarAvatar(int idUsuario, String nombreArchivo);
+    
+    public void actualizarUltimoAcceso(int idUsuario);
+    public boolean actualizarUsuario(Usuario u);
+    
+    public boolean cambiarPassword(int id, String nuevaPass);
 }
