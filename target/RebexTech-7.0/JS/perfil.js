@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // --- 1. CONSTANTES (Estilo Profe) ---
     const inputAvatar = document.getElementById('inputAvatar');
     const avatarPreview = document.getElementById('avatarPreview');
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 2. LÓGICA DE LA IMAGEN (VISTA PREVIA Y SUBIDA) ---
     if (inputAvatar) {
-        inputAvatar.addEventListener('change', function(event) {
+        inputAvatar.addEventListener('change', function (event) {
             const archivo = event.target.files[0];
             if (archivo) {
                 // VISTA PREVIA (Como la del profe)
@@ -16,26 +16,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 reader.onload = function (e) {
                     avatarPreview.src = e.target.result;
                     // Opcional: Cambiar también el mini avatar del Navbar si existe
-                    const navAvatar = document.querySelector('img.rounded-circle[width="30"]') || 
-                      document.querySelector('.navbar img.rounded-circle');
-                    if(navAvatar) navAvatar.src = e.target.result;
+                    const navAvatar = document.querySelector('img.rounded-circle[width="30"]') ||
+                            document.querySelector('.navbar img.rounded-circle');
+                    if (navAvatar)
+                        navAvatar.src = e.target.result;
                 };
                 reader.readAsDataURL(archivo);
-                
+
                 // SUBIDA AUTOMÁTICA (AJAX)
                 const formData = new FormData();
                 formData.append("accion", "updateAvatar");
                 formData.append("avatar_file", archivo);
 
-                fetch('../UsuarioController', { 
-                    method: 'POST', 
-                    body: formData 
+                fetch('../UsuarioController', {
+                    method: 'POST',
+                    body: formData
                 })
-                .then(response => response.json())
-                .then(resultado => {
-                    if (resultado.status === "success") console.log("Avatar guardado en DB");
-                })
-                .catch(error => console.error("Error avatar", error));
+                        .then(response => response.json())
+                        .then(resultado => {
+                            if (resultado.status === "success") {
+                                // Alerta pequeña (Toast) para que no interrumpa
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true
+                                });
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Imagen de perfil actualizada'
+                                });
+                            }
+                        })
+                        .catch(error => console.error("Error avatar", error));
             }
         });
     }
@@ -48,15 +62,31 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('accion', 'updateDatos');
 
             try {
-                const resp = await fetch('../UsuarioController', { method: 'POST', body: formData });
+                const resp = await fetch('../UsuarioController', {method: 'POST', body: formData});
                 const data = await resp.json();
-                
+
                 if (data.status === 'success') {
-                    alert("¡Datos actualizados con éxito!");
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizado!',
+                        text: 'Tus datos se han guardado correctamente.',
+                        timer: 1500,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.reload();
+
+                    });
                 } else {
-                    alert("Error: " + (data.mensaje || "No se pudo actualizar"));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.mensaje || "No se pudo actualizar los datos.",
+                        confirmButtonColor: '#d33'
+                    });
                 }
-            } catch (err) { alert("Error de conexión"); }
+            } catch (err) {
+                Swal.fire('Error', 'Error de conexión con el servidor', 'error');
+            }
         });
     }
 
@@ -64,13 +94,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formPass) {
         formPass.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             // Sacamos los valores directamente de los campos del form
             const nPass = formPass.querySelector('input[name="newPass"]').value;
             const cPass = formPass.querySelector('input[name="confirmPass"]').value;
 
             if (nPass !== cPass) {
-                alert("Las nuevas contraseñas no coinciden");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Las nuevas contraseñas no coinciden',
+                    confirmButtonColor: '#6f42c1'
+                });
                 return;
             }
 
@@ -78,16 +113,28 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('accion', 'updatePass');
 
             try {
-                const resp = await fetch('../UsuarioController', { method: 'POST', body: formData });
+                const resp = await fetch('../UsuarioController', {method: 'POST', body: formData});
                 const data = await resp.json();
-                
+
                 if (data.status === 'success') {
-                    alert("Contraseña actualizada");
-                    formPass.reset(); // Limpia los campos
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Contraseña cambiada!',
+                        text: 'Tu seguridad es lo primero.',
+                        confirmButtonColor: '#6f42c1',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Esto refresca la página donde estás parado. 
+                        // Si ya estás en perfil.jsp, se queda ahí pero limpia los campos.
+                        window.location.reload();
+                    });
                 } else {
-                    alert("Error: " + data.mensaje);
+                    Swal.fire('Error', data.mensaje, 'error');
                 }
-            } catch (err) { alert("Error al conectar con el servidor"); }
+            } catch (err) {
+                Swal.fire('Error', 'Fallo en la comunicación con el servidor', 'error');
+            }
         });
     }
 });

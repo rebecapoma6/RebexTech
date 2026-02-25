@@ -4,7 +4,7 @@
 
 
 <%-- Solo se mostrará si el registro fue exitoso --%>
-<c:if test="${param.registro == 'success'}">
+<%--<c:if test="${param.registro == 'success'}">
     <div class="alert alert-success alert-dismissible fade show shadow border-0 mb-4" role="alert">
         <div class="d-flex align-items-center">
             <i class="bi bi-check-circle-fill fs-4 me-2"></i>
@@ -14,9 +14,9 @@
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-</c:if>
+</c:if>--%>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -26,7 +26,8 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="${urlBase}/UsuarioController?accion=login" method="POST">
+                <form id="formLogin" action="${urlBase}/UsuarioController" method="POST">
+                    <input type="hidden" name="accion" value="login">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Email</label>
                         <input type="email" name="email" class="form-control form-control-rebex">
@@ -54,8 +55,8 @@
 
 <!--REGISTRO DE NUEVO CLIENTE-->
 
-<c:if test="${not empty sessionScope.alerta}">
-    <div id="disparadorAlerta" style="display: none;"></div></c:if>
+<%--<c:if test="${not empty sessionScope.alerta}">
+    <div id="disparadorAlerta" style="display: none;"></div></c:if>--%>
 
 
     <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel">
@@ -94,7 +95,13 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">NIF</label>
-                                <input type="text" name="nif" id="nifInput" maxlength="9" class="form-control form-control-rebex">
+                                <div class="input-group">
+                                    <input type="text" id="nifInput" maxlength="8" class="form-control form-control-rebex">
+
+                                    <input type="text" id="letraNif" class="form-control fw-bold text-center bg-light" style="max-width: 50px;" readonly >
+
+                                    <input type="hidden" name="nif" id="nifFinal">
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-bold">Nombre</label>
@@ -149,4 +156,4 @@
         </div>
     </div>
 </div>
-
+<script src="${pageContext.request.contextPath}/JS/login.js"></script>

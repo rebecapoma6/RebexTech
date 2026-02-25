@@ -9,6 +9,7 @@
 <html lang="es">
     <head>
         <jsp:include page="INCLUDE/metas.inc"/>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <title>RebexTech</title>
         <link rel="stylesheet" href="${estilo}">
     </head>
@@ -145,6 +146,31 @@
             </div>
         </section>
 
+        <div class="modal fade" id="modalDetalles${produ.idproducto}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header modal-header-rebex text-white">
+                        <h5 class="modal-title fw-bold">${produ.nombre}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="text-center mb-4">
+                            <img src="${imgBase}/${produ.imagen}" class="img-fluid rounded" style="max-height: 250px;" alt="${produ.nombre}">
+                        </div>
+                        <h6 class="text-uppercase text-muted fw-bold small">${produ.marca}</h6>
+                        <p class="text-dark">
+                            ${produ.descripcion} <%-- Aquí cargamos la descripción de la DB --%>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <span class="fs-4 fw-bold text-morado">
+                                <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                            </span>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <jsp:include page="/INCLUDE/pie.jsp" />
@@ -153,6 +179,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/JS/validaciones.js"></script>
-
+        <script src="${pageContext.request.contextPath}/JS/registro.js"></script>
     </body>
 </html>

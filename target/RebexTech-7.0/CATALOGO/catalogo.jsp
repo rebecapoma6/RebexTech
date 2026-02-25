@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}" />
 <c:set var="imgBase" value="${pageContext.request.contextPath}/IMAGENES/productos" />
@@ -102,7 +103,10 @@
                                     <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
                                     <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
                                     <div class="mt-auto">
-                                        <p class="text-primary fs-5 fw-bold mb-2">${produ.precio}€</p>
+<!--                                        <p class="text-primary fs-5 fw-bold mb-2">${produ.precio}€</p>-->
+                                        <p class="text-primary fs-5 fw-bold mb-2">
+                                        <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                                    </p>
                                         <div class="d-flex gap-2">
                                             <form action="${baseUrl}/FrontController" method="POST">
                                                 <input type="hidden" name="accion" value="verCarrito">
@@ -126,6 +130,7 @@
         <jsp:include page="/INCLUDE/pie.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${baseUrl}/JS/validaciones.js"></script>
+        <script src="${baseUrl}/JS/registro.js"></script>
 
     </body>
 </html>

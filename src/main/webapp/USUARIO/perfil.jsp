@@ -7,6 +7,7 @@
     <head>
         <jsp:include page="/INCLUDE/metas.inc"/>
         <title>Mi Perfil - RebexTech</title>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <link rel="stylesheet" href="${url}/CSS/style.css">
     </head>

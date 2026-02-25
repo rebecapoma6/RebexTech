@@ -63,6 +63,17 @@ public class Metodos {
         cookieBorrar.setMaxAge(0);
         response.addCookie(cookieBorrar);
     }
+    
+    
+    public static boolean esCPValido(String cp) {
+        // Explicación: 5 dígitos, los dos primeros del 01 al 52
+        return cp != null && cp.matches("^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$");
+    }
+    
+    public static boolean esTelefonoValido(String tlf) {
+        // Explicación: 9 dígitos, empieza por 6, 7, 8 o 9
+        return tlf != null && tlf.matches("^[6789][0-9]{8}$");
+    }
 
     public static boolean esCampoVacio(String valorCampo) {
         return (valorCampo == null || valorCampo.trim().isEmpty());

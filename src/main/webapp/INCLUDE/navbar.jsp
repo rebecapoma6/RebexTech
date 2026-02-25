@@ -3,15 +3,15 @@
 <c:set var="url" value="${pageContext.request.contextPath}" />
 
 
-<c:if test="${not empty sessionScope.alerta}">
+<%--<c:if test="${not empty sessionScope.alerta}">
     <div class="alert alert-${sessionScope.tipoAlerta} alert-dismissible fade show text-center m-0" role="alert" style="border-radius: 0;">
         <strong>${sessionScope.alerta}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <c:remove var="alerta" scope="session"/>
     <c:remove var="tipoAlerta" scope="session"/>
-</c:if>
-
+</c:if>--%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
     <div class="container">
@@ -74,8 +74,8 @@
                         <a class="nav-link position-relative icono-carrito-rebex" href="javascript:void(0)" onclick="document.getElementById('formIconoCarrito').submit();">
                             <i class="bi bi-cart-fill fs-4 text-white"></i>
                             <span id="cantidadProductosNavbar" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tamano-badge-carrito">
-    ${empty sessionScope.cantidadProductos ? 0 : sessionScope.cantidadProductos}
-</span>
+                                ${empty sessionScope.cantidadProductos ? 0 : sessionScope.cantidadProductos}
+                            </span>
                         </a>
                     </form>
                 </li>

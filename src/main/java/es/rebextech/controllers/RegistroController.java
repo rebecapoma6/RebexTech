@@ -16,9 +16,9 @@ import javax.servlet.http.Part;
 import org.apache.commons.beanutils.BeanUtils;
 
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 10,       // 10 KB
-        maxFileSize = 1024 * 100,            // 100 KB (Restricción del profesor)
-        maxRequestSize = 1024 * 500          // 500 KB total
+        fileSizeThreshold = 1024 * 10, // 10 KB
+        maxFileSize = 1024 * 100, // 100 KB (Restricción del profesor)
+        maxRequestSize = 1024 * 500 // 500 KB total
 )
 public class RegistroController extends HttpServlet {
 
@@ -31,11 +31,11 @@ public class RegistroController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // 1. AVISAMOS QUE HABLAREMOS EN JSON
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        
+
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         Usuario nuevoUsuario = new Usuario();
         HttpSession ssRegistro = request.getSession();
@@ -45,27 +45,45 @@ public class RegistroController extends HttpServlet {
             String contrasenia2 = request.getParameter("confirmarPassword");
             String email = request.getParameter("email");
             String nif = request.getParameter("nif");
-            
+            String cp = request.getParameter("codigo_postal");
+            String telefono = request.getParameter("telefono");
+
             // 2. VALIDACIONES BÁSICAS
             if (email == null || email.trim().isEmpty() || nif == null || nif.trim().isEmpty()
                     || contrasenia1 == null || contrasenia1.trim().isEmpty() || contrasenia2 == null || contrasenia2.trim().isEmpty()) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Todos los campos son obligatorios.\"}");
                 return;
             }
-            
-            if(!contrasenia1.equals(contrasenia2)){
+
+            if (!contrasenia1.equals(contrasenia2)) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Las contraseñas no coinciden.\"}");
-                return;                
+                return;
             }
-            // REVISAMOS EL NIF (Esto es lo que te faltaba para que sea perfecto)
+             //REVISAMOS EL NIF (Esto es lo que te faltaba para que sea perfecto)
             if (fabrica.getUsuarioDAO().existeNif(nif.toUpperCase().trim())) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Este NIF ya pertenece a otra cuenta.\"}");
                 return;
             }
-            
+
+            // Cambia tu validación por esta que es más clara:
+            if (nif == null || nif.trim().length() != 9 || !nif.matches("^[0-9]{8}[A-Z]$")) {
+                response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"El NIF debe tener exactamente 8 números y su letra.\"}");
+                return;
+            }
+
             if (fabrica.getUsuarioDAO().existeEmail(email)) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Este correo ya está registrado.\"}");
                 return; // IMPORTANTE: Cortamos la ejecución aquí
+            }
+
+            if (!Metodos.esCPValido(cp)) {
+                response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"El código postal no es válido en España.\"}");
+                return;
+            }
+
+            if (!Metodos.esTelefonoValido(telefono)) {
+                response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"El teléfono debe ser español (9 dígitos empezando por 6, 7, 8 o 9).\"}");
+                return;
             }
 
             // 3. POBLAR BEAN
@@ -75,7 +93,7 @@ public class RegistroController extends HttpServlet {
             nuevoUsuario.setDireccion(Metodos.capitalizar(nuevoUsuario.getDireccion()));
             nuevoUsuario.setLocalidad(Metodos.capitalizar(nuevoUsuario.getLocalidad()));
             nuevoUsuario.setProvincia(Metodos.capitalizar(nuevoUsuario.getProvincia()));
-            
+            nuevoUsuario.setNif(nif.toUpperCase().trim());
             if (nuevoUsuario.getEmail() != null) {
                 nuevoUsuario.setEmail(nuevoUsuario.getEmail().toLowerCase().trim());
             }
@@ -89,7 +107,9 @@ public class RegistroController extends HttpServlet {
                 String nombreArchivo = nuevoUsuario.getNif() + ".jpg";
                 String rutaCarpeta = getServletContext().getRealPath("/IMAGENES/avatares");
                 File carpeta = new File(rutaCarpeta);
-                if (!carpeta.exists()) carpeta.mkdirs();
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
+                }
                 fotoPart.write(rutaCarpeta + File.separator + nombreArchivo);
                 nuevoUsuario.setAvatar(nombreArchivo);
             } else {
@@ -97,7 +117,7 @@ public class RegistroController extends HttpServlet {
             }
 
             // 5. REGISTRAR EN BD
-            int idGenerado = fabrica.getUsuarioDAO().registrarUsuario(nuevoUsuario);
+            int idGenerado = fabrica.getUsuarioDAO().registrarUsuario(nuevoUsuario); //AQUI GUARDO DE MI USUARIODAO el metodo
 
             if (idGenerado > 0) {
                 // ¡AQUÍ ESTABA EL TRUCO! Le asignamos el ID generado al objeto en memoria
@@ -132,7 +152,7 @@ public class RegistroController extends HttpServlet {
                 ssRegistro.setAttribute("usuarioSesion", nuevoUsuario);
                 ssRegistro.setAttribute("alerta", "¡Registro completado con éxito! Bienvenido.");
                 ssRegistro.setAttribute("tipoAlerta", "success");
-                
+
                 // RESPUESTA DE ÉXITO A AJAX
                 response.getWriter().print("{\"status\":\"success\"}");
             } else {
@@ -146,7 +166,7 @@ public class RegistroController extends HttpServlet {
             e.printStackTrace();
             response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Ocurrió un error inesperado en el servidor.\"}");
         }
-    
+
     }
 
     @Override

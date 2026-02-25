@@ -18,7 +18,7 @@ public class AjaxController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequest(request, response);
+        doPost(request, response);
     }
 
     @Override
@@ -27,49 +27,51 @@ public class AjaxController extends HttpServlet {
 
         String accion = request.getParameter("accion");
         JSONObject objeto = new JSONObject();
-        DAOFactory fabrica = DAOFactory.getDAOFactory(); // Para usar tus DAOs
+        DAOFactory fabrica = DAOFactory.getDAOFactory();
 
-        // ==========================================
-        // 1. ACCIÓN: VALIDAR NIF (Inciso D)
-        // ==========================================
-        if ("validarDni".equals(accion)) {
-            String dniRaw = request.getParameter("dni");
-            String soloNumeros = (dniRaw != null) ? dniRaw.replaceAll("[^0-9]", "") : "";
+        if (accion != null) {
+            switch (accion) {
+                case "validarDni":
+                    String dniRaw = request.getParameter("nif");
+                    String soloNumeros = (dniRaw != null) ? dniRaw.replaceAll("[^0-9]", "") : "";
+                    try {
+                        if (soloNumeros.length() == 8) {
+                            int numero = Integer.parseInt(soloNumeros);
+                            String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+                            int indice = numero % 23;
+                            objeto.put("tipo", "success");
+                            objeto.put("letra", String.valueOf(letras.charAt(indice)));
+                        } else {
+                            objeto.put("tipo", "warning");
+                            objeto.put("letra", "Faltan dígitos");
+                        }
+                    } catch (NumberFormatException e) {
+                        objeto.put("tipo", "warning");
+                        objeto.put("letra", "Error de formato");
+                    }
+                    break;
 
-            try {
-                if (soloNumeros.length() >= 7 && soloNumeros.length() <= 8) {
-                    int numero = Integer.parseInt(soloNumeros);
-                    String letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+                case "comprobarEmail":
+                    String email = request.getParameter("email");
+                    boolean ocupado = fabrica.getUsuarioDAO().existeEmail(email);
+                    if (ocupado) {
+                        objeto.put("status", "ocupado");
+                        objeto.put("mensaje", "Este correo ya está registrado");
+                    } else {
+                        objeto.put("status", "libre");
+                        objeto.put("mensaje", "Correo disponible");
+                    }
+                    break;
+                    
+                 case "actualizarCantidad":
+                    // Aquí pones la lógica de los botones + y -
+                    // Que devuelva el nuevo subtotal y el total
+                    break;
 
-                    int indice = numero % 23;
-                    objeto.put("tipo", "success");
-                    objeto.put("letra", String.valueOf(letras.charAt(indice)));
-                } else {
-                    objeto.put("tipo", "warning");
-                    objeto.put("letra", "Debes ingresar 8 números");
-                }
-            } catch (NumberFormatException e) {
-                objeto.put("tipo", "warning");
-                objeto.put("letra", "Error en el formato del NIF");
-            }
-        } // ==========================================
-        // 2. ACCIÓN: COMPROBAR EMAIL (Inciso A) - ¡AÑADE ESTO!
-        // ==========================================
-        else if ("comprobarEmail".equals(accion)) {
-            String email = request.getParameter("email");
-            // Usamos tu método que ya revisamos en el UsuarioDAO
-            boolean ocupado = fabrica.getUsuarioDAO().existeEmail(email);
-
-            if (ocupado) {
-                objeto.put("status", "ocupado");
-                objeto.put("mensaje", "Este correo ya está registrado");
-            } else {
-                objeto.put("status", "libre");
-                objeto.put("mensaje", "Correo disponible");
+                
             }
         }
 
-        // Configuramos la respuesta una sola vez al final
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().print(objeto.toString());
