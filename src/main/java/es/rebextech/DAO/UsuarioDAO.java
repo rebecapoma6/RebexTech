@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 /**
  *
@@ -48,7 +48,7 @@ public class UsuarioDAO implements IUsuarioDAO {
                 user.setProvincia(rs.getString("provincia"));
                 user.setCodigo_postal(rs.getString("codigo_postal"));
                 user.setAvatar(rs.getString("avatar"));
-                // ... añade los campos que necesites mostrar en el perfil ...
+               
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,13 +66,17 @@ public class UsuarioDAO implements IUsuarioDAO {
         String passCifrada = Metodos.encriptar(usuario.getPassword());
         Connection cx = null;
         PreparedStatement sp = null;
-
+        ResultSet rs = null;
+        
         String consultaSql = "INSERT INTO usuarios (nif, nombre, apellidos, email, password, "
                 + "direccion, localidad, provincia, codigo_postal, telefono,avatar) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+        
+        String sqlLastId = "SELECT LAST_INSERT_ID()";
         try {
             cx = ConnectionFactory.getConnection();
-            sp = cx.prepareStatement(consultaSql, Statement.RETURN_GENERATED_KEYS);
+            sp = cx.prepareStatement(consultaSql);
+            
             sp.setString(1, usuario.getNif());
             sp.setString(2, usuario.getNombre());
             sp.setString(3, usuario.getApellidos());
@@ -87,12 +91,13 @@ public class UsuarioDAO implements IUsuarioDAO {
 
             int filasAfectadas = sp.executeUpdate();
             if (filasAfectadas > 0) {
-                // Recuperamos la clave generada automáticamente
-                try (ResultSet resultadoId = sp.getGeneratedKeys()) {
-                    if (resultadoId.next()) {
-                        idUsuarioGenerado = resultadoId.getInt(1);
-                    }
+                // Ejecutamos la consulta manual para obtener el ID
+                sp = cx.prepareStatement(sqlLastId);
+                rs = sp.executeQuery();
+                if (rs.next()) {
+                    idUsuarioGenerado = rs.getInt(1);
                 }
+
             }
 
         } catch (SQLException error) {
@@ -100,7 +105,7 @@ public class UsuarioDAO implements IUsuarioDAO {
 
         } finally {
             // Mandamos null en el ResultSet porque ya se cerró arriba con el try-with-resources
-            Metodos.cerrarRecursos(cx, sp, null);
+            Metodos.cerrarRecursos(cx,sp,rs);
         }
         return idUsuarioGenerado;
     }

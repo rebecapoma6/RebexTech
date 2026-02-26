@@ -2,20 +2,6 @@
 <c:set var="urlBase" value="${pageContext.request.contextPath}" />
 
 
-
-<%-- Solo se mostrará si el registro fue exitoso --%>
-<%--<c:if test="${param.registro == 'success'}">
-    <div class="alert alert-success alert-dismissible fade show shadow border-0 mb-4" role="alert">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-check-circle-fill fs-4 me-2"></i>
-            <div>
-                <strong>¡Bienvenido a RebexTech!</strong> Tu cuenta ha sido creada. Ya puedes iniciar sesión.
-            </div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</c:if>--%>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="modal fade" id="loginModal" tabindex="-1">
@@ -53,10 +39,9 @@
 
 
 
-<!--REGISTRO DE NUEVO CLIENTE-->
+                            <!--REGISTRO DE NUEVO CLIENTE-->
 
-<%--<c:if test="${not empty sessionScope.alerta}">
-    <div id="disparadorAlerta" style="display: none;"></div></c:if>--%>
+
 
 
     <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="registroModalLabel">

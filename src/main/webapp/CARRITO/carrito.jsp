@@ -116,7 +116,7 @@
                         <h4 class="fw-bold mb-4">Resumen</h4>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Productos:</span>
-                            <span>
+                            <span id="totalCarrito">
                                 <fmt:formatNumber value="${empty totalPrecio ? 0 : totalPrecio}" minFractionDigits="2" maxFractionDigits="2" />€
                             </span>
                         </div>
@@ -127,7 +127,7 @@
                         <hr>
                         <div class="d-flex justify-content-between mb-4">
                             <span class="fs-5 fw-bold">TOTAL:</span>
-                            <span class="fs-5 fw-bold text-morado-claro">
+                            <span class="fs-5 fw-bold text-morado-claro" id="totalFinal">
                                 <fmt:formatNumber value="${empty totalPrecio ? 0 : totalPrecio}" minFractionDigits="2" maxFractionDigits="2" />€
                             </span>
                         </div>
@@ -139,9 +139,8 @@
                                 </button>
                             </c:when>
                             <c:otherwise>
-                                <form action="FrontController" method="POST">
-                                    <input type="hidden" name="accion" value="finalizarCompra">
-                                    <button type="submit" class="btn btn-rebex w-100 py-3 fw-bold">
+                                <form action="CarritoController" method="POST">
+                                    <input type="hidden" name="accionCarrito" value="finalizarCompra"> <button type="submit" class="btn btn-rebex w-100 py-3 fw-bold">
                                         TRAMITAR COMPRA
                                     </button>
                                 </form>

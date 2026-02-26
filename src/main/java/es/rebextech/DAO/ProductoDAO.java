@@ -94,7 +94,7 @@ public class ProductoDAO implements IProductoDAO {
                 p.setNombre(rs.getString("nombre"));
                 p.setPrecio(rs.getDouble("precio"));
                 p.setMarca(rs.getString("marca"));
-
+                p.setDescripcion(rs.getString("descripcion"));
                 String imgBD = rs.getString("imagen");
                 // Si la ruta no termina en .jpg, se lo concatenamos aquí
                 if (imgBD != null && !imgBD.toLowerCase().endsWith(".jpg")) {
@@ -150,7 +150,7 @@ public class ProductoDAO implements IProductoDAO {
                 producto.setNombre(resultado.getString("nombre"));
                 producto.setPrecio(resultado.getDouble("precio"));
                 producto.setMarca(resultado.getString("marca"));
-
+                producto.setDescripcion(resultado.getString("descripcion"));
                 String imagenBD = resultado.getString("imagen");
                 if (imagenBD != null && !imagenBD.toLowerCase().endsWith(".jpg")) {
                     imagenBD += ".jpg";
@@ -226,7 +226,7 @@ public class ProductoDAO implements IProductoDAO {
                 producto.setNombre(resultado.getString("nombre"));
                 producto.setPrecio(resultado.getDouble("precio"));
                 producto.setMarca(resultado.getString("marca"));
-
+                producto.setDescripcion(resultado.getString("descripcion"));
                 String imagenBD = resultado.getString("imagen");
                 if (imagenBD != null && !imagenBD.toLowerCase().endsWith(".jpg")) {
                     imagenBD += ".jpg";

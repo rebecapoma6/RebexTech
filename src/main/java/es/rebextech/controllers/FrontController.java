@@ -53,6 +53,7 @@ public class FrontController extends HttpServlet {
         } else {
             switch (accionSolicitada) {
                 case "verCarrito":
+                case "finalizarCompra":
                     urlDestino = "CarritoController";
                     break;
                 case "login":

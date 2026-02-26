@@ -29,39 +29,39 @@
                         </div>
                     </div>
 
-                            <div class="col-md-3">
-    <label class="form-label small fw-bold text-muted mb-2">Categorías</label>
-    <div class="dropdown">
-        <button class="btn bg-light w-100 text-start d-flex justify-content-between align-items-center border-0 py-2" 
-                type="button" id="multiSelectCat" data-bs-toggle="dropdown" aria-expanded="false" 
-                style="border-radius: 8px; color: #6c757d;">
-            <span>Seleccionar...</span>
-            <i class="bi bi-chevron-down small"></i>
-        </button>
-        
-        <ul class="dropdown-menu shadow border-0 p-3 w-100 scroll-personalizado" 
-            aria-labelledby="multiSelectCat" 
-            style="max-height: 200px; overflow-y: auto;">
-            
-            <c:forEach var="cat" items="${categoriasGlobales}">
-                <li class="mb-2">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="idcategoria" 
-                               value="${cat.idcategoria}" id="catCheck-${cat.idcategoria}"
-                               <c:if test="${not empty paramValues.idcategoria}">
-                                   <c:forEach var="selectedId" items="${paramValues.idcategoria}">
-                                       <c:if test="${selectedId == cat.idcategoria}">checked</c:if>
-                                   </c:forEach>
-                               </c:if>>
-                        <label class="form-check-label small" for="catCheck-${cat.idcategoria}">
-                            ${cat.nombre}
-                        </label>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted mb-2">Categorías</label>
+                        <div class="dropdown">
+                            <button class="btn bg-light w-100 text-start d-flex justify-content-between align-items-center border-0 py-2" 
+                                    type="button" id="multiSelectCat" data-bs-toggle="dropdown" aria-expanded="false" 
+                                    style="border-radius: 8px; color: #6c757d;">
+                                <span>Seleccionar...</span>
+                                <i class="bi bi-chevron-down small"></i>
+                            </button>
+
+                            <ul class="dropdown-menu shadow border-0 p-3 w-100 scroll-personalizado" 
+                                aria-labelledby="multiSelectCat" 
+                                style="max-height: 200px; overflow-y: auto;">
+
+                                <c:forEach var="cat" items="${categoriasGlobales}">
+                                    <li class="mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="idcategoria" 
+                                                   value="${cat.idcategoria}" id="catCheck-${cat.idcategoria}"
+                                                   <c:if test="${not empty paramValues.idcategoria}">
+                                                       <c:forEach var="selectedId" items="${paramValues.idcategoria}">
+                                                           <c:if test="${selectedId == cat.idcategoria}">checked</c:if>
+                                                       </c:forEach>
+                                                   </c:if>>
+                                            <label class="form-check-label small" for="catCheck-${cat.idcategoria}">
+                                                ${cat.nombre}
+                                            </label>
+                                        </div>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
                     </div>
-                </li>
-            </c:forEach>
-        </ul>
-    </div>
-</div>
 
                     <div class="col-md-3">
                         <label class="form-label small fw-bold text-muted">Rango de Precio</label>
@@ -99,24 +99,59 @@
                                 <div class="p-4 bg-light text-center">
                                     <img src="${imgBase}/${produ.imagen}" alt="${produ.nombre}" class="img-fluid img-producto-landing">
                                 </div>
+
                                 <div class="card-body d-flex flex-column pt-3">
                                     <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
                                     <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
+
                                     <div class="mt-auto">
-<!--                                        <p class="text-primary fs-5 fw-bold mb-2">${produ.precio}€</p>-->
                                         <p class="text-primary fs-5 fw-bold mb-2">
-                                        <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
-                                    </p>
+                                            <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                                        </p>
+
                                         <div class="d-flex gap-2">
-                                            <form action="${baseUrl}/FrontController" method="POST">
+                                            <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#modalDetalles${produ.idproducto}">
+                                                DETALLES
+                                            </button>
+
+                                            <form action="${baseUrl}/FrontController" method="POST" style="margin:0;">
                                                 <input type="hidden" name="accion" value="verCarrito">
                                                 <input type="hidden" name="accionCarrito" value="agregar">
                                                 <input type="hidden" name="idProducto" value="${produ.idproducto}">
 
-                                                <button type="submit" class="btn btn-rebex w-100 rounded-3">
-                                                    <i class="bi bi-cart-plus-fill me-1"></i> AÑADIR
+                                                <button type="submit" class="btn btn-rebex rounded-3">
+                                                    <i class="bi bi-cart-plus-fill"></i>
                                                 </button>
                                             </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="modalDetalles${produ.idproducto}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg">
+                                    <div class="modal-header modal-header-rebex text-white">
+                                        <h5 class="modal-title fw-bold">${produ.nombre}</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center">
+                                        <img src="${imgBase}/${produ.imagen}" class="img-fluid mb-3 rounded" style="max-height: 200px;">
+
+                                        <%-- Aquí es donde ocurre la magia --%>
+                                        <div class="text-start border-top pt-3">
+                                            <h6 class="fw-bold text-morado text-uppercase small">Descripción del Producto</h6>
+                                            <p class="text-muted" style="white-space: pre-wrap;">${produ.descripcion}</p>
+                                        </div>
+
+                                        <div class="bg-light p-3 rounded-3 d-flex justify-content-between align-items-center mt-3">
+                                            <span class="fw-bold text-dark">Precio:</span>
+                                            <span class="fs-5 fw-bold text-primary">
+                                                <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

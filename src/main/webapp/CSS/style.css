@@ -269,3 +269,44 @@
 body.modal-open {
     overflow: hidden;
 }
+
+
+/* --- ESTILOS FACTURA ELECTRÓNICA --- */
+.factura-container {
+    background: var(--blanco-puro);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    margin-top: 50px; /* Separación del navbar */
+    border-top: 10px solid var(--morado-rebex);
+    overflow: hidden;
+}
+
+.header-factura {
+    background-color: #fcfaff; /* Un lila casi blanco muy sutil */
+    padding: 40px;
+    border-bottom: 2px dashed var(--gris-input);
+}
+
+.badge-pedido {
+    background-color: var(--morado-rebex);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.tabla-factura thead {
+    background-color: var(--morado-rebex);
+    color: white;
+}
+
+.text-morado-rebex {
+    color: var(--morado-rebex);
+}
+
+.bg-total-factura {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    border: 1px solid var(--gris-input);
+}

@@ -3,6 +3,7 @@ package es.rebextech.DAO;
 import es.rebextech.IDAO.IPedidoDAO;
 import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Pedido;
+import es.rebextech.beans.Producto;
 import es.rebextech.utils.Metodos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,73 +22,71 @@ public class PedidoDAO implements IPedidoDAO {
     @Override
     public boolean finalizarPedido(int idUsuario, List<LineaPedido> carrito, double totalImporte) {
         Connection con = null;
-        PreparedStatement psPedido = null;
-        PreparedStatement psLinea = null;
-        ResultSet rs = null;
-        boolean exito = false;
+    PreparedStatement psPedido = null;
+    PreparedStatement psLinea = null;
+    ResultSet rs = null;
+    boolean exito = false;
 
-        // Calculamos el IVA basándonos en tu Bean (suponiendo 21%)
-        double calculadoIva = totalImporte * 0.21;
-        double importeSinIva = totalImporte - calculadoIva;
+    // Calculamos el IVA basándonos en tu 21%
+    double calculadoIva = totalImporte * 0.21;
+    double importeSinIva = totalImporte - calculadoIva;
 
-        // SQL para el Pedido (usando tu constante 'f')
-        String sqlPedido = "INSERT INTO pedidos (idusuario, fecha, importe, iva, estado) VALUES (?, NOW(), ?, ?, ?)";
+    // SQL para el Pedido
+    String sqlPedido = "INSERT INTO pedidos (idusuario, fecha, importe, iva, estado) VALUES (?, NOW(), ?, ?, ?)";
 
-        // SQL para las Líneas (ajusta los nombres de columna según tu tabla lineas_pedidos)
-        String sqlLinea = "INSERT INTO lineas_pedidos (idpedido, idproducto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+    // SQL PARA LAS LÍNEAS (¡Aquí estaba el error! Solo 3 columnas: idpedido, idproducto, cantidad)
+    String sqlLinea = "INSERT INTO lineaspedidos (idpedido, idproducto, cantidad) VALUES (?, ?, ?)";
 
-        try {
-            con = ConnectionFactory.getConnection();
-            con.setAutoCommit(false); // Iniciar Transacción
+    try {
+        con = ConnectionFactory.getConnection();
+        con.setAutoCommit(false); // Iniciar Transacción
 
-            // 1. Insertar la cabecera del Pedido
-            psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
-            psPedido.setInt(1, idUsuario);
-            psPedido.setDouble(2, importeSinIva);
-            psPedido.setDouble(3, calculadoIva);
-            psPedido.setString(4, String.valueOf(Pedido.ESTADO_FINALIZADO)); // Guardamos 'f'
+        // 1. Insertar la cabecera del Pedido
+        psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
+        psPedido.setInt(1, idUsuario);
+        psPedido.setDouble(2, importeSinIva);
+        psPedido.setDouble(3, calculadoIva);
+        psPedido.setString(4, String.valueOf(Pedido.ESTADO_FINALIZADO)); 
 
-            int filasPedido = psPedido.executeUpdate();
+        int filasPedido = psPedido.executeUpdate();
 
-            if (filasPedido > 0) {
-                // Recuperamos el ID generado para este pedido
-                rs = psPedido.getGeneratedKeys();
-                if (rs.next()) {
-                    short idPedidoGenerado = rs.getShort(1);
+        if (filasPedido > 0) {
+            rs = psPedido.getGeneratedKeys();
+            if (rs.next()) {
+                short idPedidoGenerado = rs.getShort(1);
 
-                    // 2. Insertar las líneas del pedido usando Batch para mejorar el rendimiento
-                    psLinea = con.prepareStatement(sqlLinea);
-                    for (LineaPedido lp : carrito) {
-                        psLinea.setShort(1, idPedidoGenerado);
-                        psLinea.setInt(2, lp.getProducto().getIdproducto()); // Sacamos el ID del objeto
-                        psLinea.setInt(3, lp.getCantidad()); // ¡AHORA USAMOS LA CANTIDAD REAL!
-                        psLinea.setDouble(4, lp.getProducto().getPrecio());
-                        psLinea.addBatch();
-                    }
-
-                    psLinea.executeBatch(); // Ejecuta todas las inserciones de golpe
-                    con.commit(); // Confirmar cambios en la BD
-                    exito = true;
+                // 2. Insertar las líneas del pedido
+                psLinea = con.prepareStatement(sqlLinea);
+                for (LineaPedido lp : carrito) {
+                    psLinea.setShort(1, idPedidoGenerado);
+                    psLinea.setInt(2, lp.getProducto().getIdproducto());
+                    psLinea.setInt(3, lp.getCantidad());
+                    // ¡OJO! Aquí ya NO ponemos el setDouble del precio_unitario porque lo quitamos del SQL arriba
+                    psLinea.addBatch();
                 }
-            }
 
-        } catch (SQLException e) {
-            System.err.println("Error al finalizar compra: " + e.getMessage());
-            if (con != null) {
-                try {
-                    con.rollback(); // Si algo falla, deshace todo
-                    System.err.println("Se ha realizado un rollback de la transacción.");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+                psLinea.executeBatch(); 
+                con.commit(); 
+                exito = true;
             }
-        } finally {
-            // Cerramos los recursos de forma segura
-            Metodos.cerrarRecursos(null, psLinea, null); // Cerramos psLinea manualmente
-            Metodos.cerrarRecursos(con, psPedido, rs);
         }
 
-        return exito;
+    } catch (SQLException e) {
+        System.err.println("Error al finalizar compra: " + e.getMessage());
+        if (con != null) {
+            try {
+                con.rollback(); 
+                System.err.println("Se ha realizado un rollback.");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    } finally {
+        Metodos.cerrarRecursos(null, psLinea, null); 
+        Metodos.cerrarRecursos(con, psPedido, rs);
+    }
+
+    return exito;
     }
 
     @Override
@@ -392,6 +391,43 @@ public class PedidoDAO implements IPedidoDAO {
         } finally {
             Metodos.cerrarRecursos(con, ps, null);
         }
+    }
+
+    @Override
+    public List<LineaPedido> getLineasPorIdPedido(int idPedido) {
+        List<LineaPedido> lista = new ArrayList<>();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        // Unimos con productos para sacar el nombre, imagen y precio
+        String sql = "SELECT lp.*, p.nombre, p.imagen, p.precio "
+            + "FROM lineaspedidos lp " 
+            + "JOIN productos p ON lp.idproducto = p.idproducto "
+            + "WHERE lp.idpedido = ?";
+        try {
+            con = ConnectionFactory.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idPedido);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                LineaPedido lp = new LineaPedido();
+                lp.setCantidad(rs.getByte("cantidad"));
+
+                Producto p = new Producto();
+                p.setNombre(rs.getString("nombre"));
+                p.setImagen(rs.getString("imagen"));
+                p.setPrecio(rs.getDouble("precio"));
+
+                lp.setProducto(p);
+                lista.add(lp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            Metodos.cerrarRecursos(con, ps, rs);
+        }
+        return lista;
     }
 
 }

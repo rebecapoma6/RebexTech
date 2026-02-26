@@ -1,55 +1,41 @@
-async function cambiarCantidad(idProd, cambio) {
-    // 1. DECLARAMOS TODOS LOS ELEMENTOS QUE VAMOS A TOCAR
-    const spanCant = document.getElementById(`cant-${idProd}`);
-    const cellSubtotal = document.getElementById(`subtotal-${idProd}`);
-    const labelTotalResumen = document.getElementById("totalCarrito");
-    const labelTotalFinal = document.getElementById("totalFinal");
-    const iconoNavbar = document.getElementById("cantidadProductosNavbar"); // Ajusta este ID según tu navbar
+async function cambiarCantidad(idProductoSeleccionado, valorCambio) {
+   const etiquetaCantidadActual = document.getElementById(`cant-${idProductoSeleccionado}`);
+    const celdaSubtotalLinea = document.getElementById(`subtotal-${idProductoSeleccionado}`);
+    const etiquetaTotalResumenDerecha = document.getElementById("totalCarrito");
+    const etiquetaTotalFinalPago = document.getElementById("totalFinal");
+    const circuloNotificacionNavbar = document.getElementById("cantidadProductosNavbar");
 
-    // 2. LÓGICA DE CÁLCULO PREVIA
-    let nuevaCant = parseInt(spanCant.innerText) + cambio;
-    if (nuevaCant < 1) return; // No permitimos menos de 1 unidad
+    let cantidadCalculada = parseInt(etiquetaCantidadActual.innerText) + valorCambio;
+    if (cantidadCalculada < 1) return;
 
-    // 3. PREPARAMOS LA PETICIÓN
-    const formData = new FormData();
-    formData.append("accion", "verCarrito"); 
-    formData.append("accionCarrito", "actualizarCantidadCarrito");
-    formData.append("id", idProd);
-    formData.append("cantidad", nuevaCant);
+    const parametrosPeticion = new URLSearchParams();
+    parametrosPeticion.append("accion", "verCarrito"); 
+    parametrosPeticion.append("accionCarrito", "actualizarCantidadCarrito");
+    parametrosPeticion.append("id", idProductoSeleccionado);
+    parametrosPeticion.append("cantidad", cantidadCalculada);
 
     try {
-        const resp = await fetch('FrontController', { 
-            method: 'POST', 
-            body: formData 
+        const respuestaServidor = await fetch('CarritoController', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: parametrosPeticion
         });
         
-        const data = await resp.json();
+        // LEEMOS DIRECTO COMO JSON (Solo una vez)
+        const datosActualizados = await respuestaServidor.json();
 
-        if (data.status === "success") {
-            // 4. ACTUALIZAMOS LA VISTA CON LOS DATOS QUE NOS DA EL SERVLET
+        if (datosActualizados.status === "success") {
+            etiquetaCantidadActual.innerText = cantidadCalculada;
             
-            // Actualizamos el número de la cantidad
-            spanCant.innerText = nuevaCant;
+            if (celdaSubtotalLinea) celdaSubtotalLinea.innerText = datosActualizados.nuevoSubtotal + "€";
+            if (etiquetaTotalResumenDerecha) etiquetaTotalResumenDerecha.innerText = datosActualizados.nuevoTotal + "€";
+            if (etiquetaTotalFinalPago) etiquetaTotalFinalPago.innerText = datosActualizados.nuevoTotal + "€";
             
-            // Actualizamos el subtotal de la fila (ej: 100.00€)
-            if (cellSubtotal) {
-                cellSubtotal.innerText = data.nuevoSubtotal + "€";
-            }
-            
-            // Actualizamos los totales del resumen de la derecha
-            if (labelTotalResumen) {
-                labelTotalResumen.innerText = data.nuevoTotal + "€";
-            }
-            if (labelTotalFinal) {
-                labelTotalFinal.innerText = data.nuevoTotal + "€";
-            }
-            
-            // Actualizamos el numerito rojo del carrito en el navbar
-            if (iconoNavbar) {
-                iconoNavbar.innerText = data.nuevoContador; 
+            if (circuloNotificacionNavbar) {
+                circuloNotificacionNavbar.innerText = datosActualizados.nuevoContador;
             }
         }
-    } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
+    } catch (errorConexion) {
+        console.error("Hubo un error en la actualización:", errorConexion);
     }
 }

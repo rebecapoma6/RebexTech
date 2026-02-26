@@ -19,4 +19,5 @@ public interface IPedidoDAO {
     public void vaciarCarritoBD(int idUsuario);
     public List<Pedido> getPedidosPorUsuario(int idUsuario);
     public void actualizarCantidadProductoBD(int idUsuario, int idProducto, int nuevaCantidad);
+    public List<LineaPedido> getLineasPorIdPedido(int idPedido);
 }

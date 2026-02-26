@@ -52,51 +52,69 @@
 
 
         <section id="ventas" class="container my-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold m-0 section-title-rebex">LOS MÁS VENDIDOS</h2>
-            </div>
-            <div class="row g-4">
-                <c:forEach var="produ" items="${productosLanding}">
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                        <div class="card h-100 border-0 shadow-sm card-producto">
-                            <div class="p-4 bg-light text-center">
-                                <img src="${imgBase}/${produ.imagen}" alt="${produ.nombre}" class="img-fluid img-producto-landing">
-                            </div>
-                            <div class="card-body d-flex flex-column pt-3">
-                                <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
-                                <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
-                                <div class="mt-auto">
-                                    <p class="text-primary fs-5 fw-bold mb-2">
-                                        <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
-                                    </p>
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#modalDetalles${produ.idproducto}">
-                                            DETALLES
-                                        </button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0 section-title-rebex">LOS MÁS VENDIDOS</h2>
+    </div>
+    <div class="row g-4">
+        <c:forEach var="produ" items="${productosLanding}">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm card-producto">
+                    <div class="p-4 bg-light text-center">
+                        <img src="${imgBase}/${produ.imagen}" alt="${produ.nombre}" class="img-fluid img-producto-landing">
+                    </div>
+                    <div class="card-body d-flex flex-column pt-3">
+                        <small class="text-uppercase text-muted fw-bold">${produ.marca}</small>
+                        <h5 class="card-title h6 fw-bold text-dark">${produ.nombre}</h5>
+                        <div class="mt-auto">
+                            <p class="text-primary fs-5 fw-bold mb-2">
+                                <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                            </p>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-rebex w-100 fw-bold" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalDetalles${produ.idproducto}">
+                                    DETALLES
+                                </button>
 
-<!--                                        <a href="FrontController?accion=verCarrito&accionCarrito=agregar&idProducto=${produ.idproducto}" 
-                                           class="btn btn-rebex rounded-3">
-                                            <i class="bi bi-cart-plus-fill"></i>
-                                        </a>-->
-                                        <form action="FrontController" method="POST" style="display:inline;">
-                                            <input type="hidden" name="accion" value="verCarrito">
-                                            <input type="hidden" name="accionCarrito" value="agregar">
-                                            <input type="hidden" name="idProducto" value="${produ.idproducto}">
-
-                                            <button type="submit" class="btn btn-rebex rounded-3">
-                                                <i class="bi bi-cart-plus-fill"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                                <form action="FrontController" method="POST" style="display:inline;">
+                                    <input type="hidden" name="accion" value="verCarrito">
+                                    <input type="hidden" name="accionCarrito" value="agregar">
+                                    <input type="hidden" name="idProducto" value="${produ.idproducto}">
+                                    <button type="submit" class="btn btn-rebex rounded-3">
+                                        <i class="bi bi-cart-plus-fill"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </c:forEach>
+                </div>
             </div>
-        </section>
+
+            <div class="modal fade" id="modalDetalles${produ.idproducto}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header modal-header-rebex text-white">
+                            <h5 class="modal-title fw-bold">${produ.nombre}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4 text-center">
+                            <img src="${imgBase}/${produ.imagen}" class="img-fluid mb-3 rounded" style="max-height: 200px;">
+                            <div class="text-start border-top pt-3">
+                                <h6 class="fw-bold text-morado text-uppercase small">Descripción del Producto</h6>
+                                <p class="text-muted" style="white-space: pre-wrap;">${produ.descripcion}</p>
+                            </div>
+                            <div class="bg-light p-3 rounded-3 d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold text-dark">Precio:</span>
+                                <span class="fs-5 fw-bold text-primary">
+                                    <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:forEach> </div>
+</section>
 
 
 
@@ -145,32 +163,10 @@
                     </c:forEach>
             </div>
         </section>
+        
+       
 
-        <div class="modal fade" id="modalDetalles${produ.idproducto}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header modal-header-rebex text-white">
-                        <h5 class="modal-title fw-bold">${produ.nombre}</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <div class="text-center mb-4">
-                            <img src="${imgBase}/${produ.imagen}" class="img-fluid rounded" style="max-height: 250px;" alt="${produ.nombre}">
-                        </div>
-                        <h6 class="text-uppercase text-muted fw-bold small">${produ.marca}</h6>
-                        <p class="text-dark">
-                            ${produ.descripcion} <%-- Aquí cargamos la descripción de la DB --%>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <span class="fs-4 fw-bold text-morado">
-                                <fmt:formatNumber value="${produ.precio}" type="number" minFractionDigits="2" maxFractionDigits="2" />€
-                            </span>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
 
         <jsp:include page="/INCLUDE/pie.jsp" />
