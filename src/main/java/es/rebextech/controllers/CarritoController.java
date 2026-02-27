@@ -92,76 +92,6 @@ public class CarritoController extends HttpServlet {
                     }
                     break;
 
-                case "actualizarCantidadCarrito":
-
-                    int idProd = Integer.parseInt(request.getParameter("id"));
-                    int nuevaCant = Integer.parseInt(request.getParameter("cantidad"));
-                    double nuevoSubtotal = 0;
-                    double nuevoTotal = 0;
-                    int totalItemsGlobal = 0;
-
-                    if (usuarioLogueado != null) {
-                        // CASO LOGUEADO: Base de Datos
-                        fabrica.getPedidoDAO().actualizarCantidadProductoBD(usuarioLogueado.getIdusuario(), idProd, nuevaCant);
-                        List<LineaPedido> listaLineas = fabrica.getProductoDAO().getProductosCarritoBD(usuarioLogueado.getIdusuario());
-                        for (LineaPedido lp : listaLineas) {
-                            if (lp.getProducto().getIdproducto() == idProd) {
-                                nuevoSubtotal = lp.getSubtotal();
-                            }
-                            nuevoTotal += lp.getSubtotal();
-                            totalItemsGlobal += lp.getCantidad();
-                        }
-                    } else {
-                        // CASO ANÓNIMO: Reconstruir Cookie
-                        String[] idsActuales = datosCarrito.split("-");
-                        StringBuilder nuevaCadenaCookie = new StringBuilder();
-                        // Agregar los demás productos
-                        for (String id : idsActuales) {
-                            if (!id.equals(String.valueOf(idProd)) && !id.isEmpty()) {
-                                if (nuevaCadenaCookie.length() > 0) {
-                                    nuevaCadenaCookie.append("-");
-                                }
-                                nuevaCadenaCookie.append(id);
-                            }
-                        }
-                        // Agregar el actual N veces
-                        for (int i = 0; i < nuevaCant; i++) {
-                            if (nuevaCadenaCookie.length() > 0) {
-                                nuevaCadenaCookie.append("-");
-                            }
-                            nuevaCadenaCookie.append(idProd);
-                        }
-                        datosCarrito = nuevaCadenaCookie.toString();
-
-                        // Calcular totales para la respuesta
-                        List<Producto> listaProdsCoke = fabrica.getProductoDAO().getProductosCarrito(datosCarrito.split("-"));
-                        for (Producto p : listaProdsCoke) {
-                            if (p.getIdproducto() == idProd) {
-                                nuevoSubtotal = p.getPrecio() * nuevaCant;
-                                nuevoTotal += nuevoSubtotal;
-                                totalItemsGlobal += nuevaCant;
-                            } else {
-                                nuevoTotal += p.getPrecio(); // Asumiendo 1 de cada uno de los otros
-                                totalItemsGlobal += 1;
-                            }
-                        }
-                        Cookie c = new Cookie("carritoRebex", datosCarrito);
-                        c.setPath("/");
-                        c.setMaxAge(60 * 60 * 24 * 2);
-                        response.addCookie(c);
-                    }
-
-                    // Respuesta JSON
-                    sesion.setAttribute("cantidadProductos", totalItemsGlobal);
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    String json = "{\"status\":\"success\","
-                            + "\"nuevoSubtotal\":\"" + String.format("%.2f", nuevoSubtotal).replace(",", ".") + "\","
-                            + "\"nuevoTotal\":\"" + String.format("%.2f", nuevoTotal).replace(",", ".") + "\","
-                            + "\"nuevoContador\":\"" + totalItemsGlobal + "\"}";
-                    response.getWriter().print(json);
-                    return;
-
                 case "finalizarCompra":
                     if (usuarioLogueado != null) {
 
@@ -228,11 +158,20 @@ public class CarritoController extends HttpServlet {
                 List<LineaPedido> listaParaJSP = new ArrayList<>();
                 double total = 0;
                 for (Producto p : listaProductos) {
+                    // Contamos su cantidad real en la cookie
+                    int cantidadReal = 0;
+                    for (String idString : ids) {
+                        if (!idString.isEmpty() && Integer.parseInt(idString) == p.getIdproducto()) {
+                            cantidadReal++;
+                        }
+                    }
+
                     LineaPedido lp = new LineaPedido();
                     lp.setProducto(p);
-                    lp.setCantidad((byte) 1);
+                    lp.setCantidad((byte) cantidadReal); // LA MAGIA ESTÁ AQUÍ
                     listaParaJSP.add(lp);
-                    total += p.getPrecio();
+
+                    total += (p.getPrecio() * cantidadReal);
                 }
                 request.setAttribute("listaProductos", listaParaJSP);
                 request.setAttribute("totalPrecio", total);

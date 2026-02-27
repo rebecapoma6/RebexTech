@@ -25,7 +25,7 @@ public class FrontController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String accionSolicitada = request.getParameter("accion");
         HttpSession sesion = request.getSession();
         String urlDestino = "index.jsp";
@@ -36,14 +36,12 @@ public class FrontController extends HttpServlet {
         // ============================================================
         if (accionSolicitada == null && sesion.getAttribute("verCarritoDespues") != null) {
             accionSolicitada = "verCarrito";
-            sesion.removeAttribute("verCarritoDespues"); 
+            sesion.removeAttribute("verCarritoDespues");
         }
         // ============================================================
 
-        
-
         if ("buscar".equals(accionSolicitada)) {
-            urlDestino = "CatalogoController"; 
+            urlDestino = "CatalogoController";
 
         } else if (accionSolicitada == null || accionSolicitada.isEmpty() || "inicio".equals(accionSolicitada)) {
             List<Producto> productosAlAzar = fabrica.getProductoDAO().getProductosAleatorios(12);
@@ -57,19 +55,13 @@ public class FrontController extends HttpServlet {
                     urlDestino = "CarritoController";
                     break;
                 case "login":
+                case "perfil":
                 case "salir":
                     urlDestino = "UsuarioController";
                     break;
                 case "registro":
                     urlDestino = "RegistroController";
-                    break;
-                // Dentro del switch de FrontController
-                case "perfil":
-                    urlDestino = "UsuarioController";
-                    break;
-                case "actualizarCantidadCarrito": // La acción que envía el fetch de JS
-                    urlDestino = "CarritoController";
-                    break;
+                    break;             
                 default:
                     urlDestino = "index.jsp";
                     break;

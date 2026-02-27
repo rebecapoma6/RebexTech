@@ -10,7 +10,6 @@ es\rebextech\DAO\CategoriaDAO.class
 es\rebextech\filters\CodeFilter.class
 es\rebextech\controllers\CarritoController.class
 es\rebextech\DAO\UsuarioDAO.class
-es\rebextech\filters\LoginFilter.class
 es\rebextech\IDAO\IPedidoDAO.class
 es\rebextech\DAOFactory\MySQLDAOFactory.class
 es\rebextech\IDAO\IUsuarioDAO.class

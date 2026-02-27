@@ -1,3 +1,4 @@
+
 async function cambiarCantidad(idProductoSeleccionado, valorCambio) {
     const etiquetaCantidadActual = document.getElementById(`cant-${idProductoSeleccionado}`);
     const cantidadActual = parseInt(etiquetaCantidadActual.innerText);
@@ -9,16 +10,16 @@ async function cambiarCantidad(idProductoSeleccionado, valorCambio) {
 
     // 2. Preparamos los datos para el Servlet
     const parametrosPeticion = new URLSearchParams();
-    parametrosPeticion.append("accionCarrito", "actualizarCantidadCarrito");
+    parametrosPeticion.append("accion", "actualizarCantidadCarrito");
     parametrosPeticion.append("id", idProductoSeleccionado);
     parametrosPeticion.append("cantidad", cantidadCalculada);
 
     try {
         // 3. Usamos la constante URL_PROYECTO que definimos en el JSP
-        const respuestaServidor = await fetch(RUTA_CARRITO, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: parametrosPeticion
+        const respuestaServidor = await fetch(URL_AJAX, {
+            method: 'POST',            
+            body: parametrosPeticion.toString(),
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         });
 
         const datosActualizados = await respuestaServidor.json();
