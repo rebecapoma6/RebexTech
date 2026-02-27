@@ -124,7 +124,7 @@
 
         <jsp:include page="/INCLUDE/pie.jsp" />
         <jsp:include page="/INCLUDE/modal.jsp" />
-
+        <script>const URL_PERFIL = "${url}/UsuarioController";</script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${url}/JS/perfil.js"></script> </body>
 </html>

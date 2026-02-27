@@ -1,32 +1,47 @@
-const AJAX_CARRITO = 'CarritoController';
 
-async function cambiarCantidad(idProductoSeleccionado, valorCambio) {
-    const etiquetaCantidadActual = document.getElementById(`cant-${idProductoSeleccionado}`);
-    const cantidadActual = parseInt(etiquetaCantidadActual.innerText);
-    let cantidadCalculada = cantidadActual + valorCambio;
+document.addEventListener("DOMContentLoaded", () => {
+    const formLogin = document.getElementById('formLogin');
 
-    if (cantidadCalculada < 1) return;
+    formLogin?.addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+        const formData = new FormData(formLogin);
+        const dataURL = new URLSearchParams(formData).toString();
 
-    const parametrosPeticion = new URLSearchParams();
-    parametrosPeticion.append("accionCarrito", "actualizarCantidadCarrito");
-    parametrosPeticion.append("id", idProductoSeleccionado);
-    parametrosPeticion.append("cantidad", cantidadCalculada);
+        try {
+            const resp = await fetch(RUTA_LOGIN, {
+                method: 'POST',
+                body: dataURL,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
 
-    try {
-        const respuestaServidor = await fetch(AJAX_CARRITO, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: parametrosPeticion
-        });
+            // Si el servidor responde con JSON, lo atrapamos aquí
+            const data = await resp.json();
 
-        const datosActualizados = await respuestaServidor.json();
-
-        if (datosActualizados.status === "success") {
-            // Recargamos la página para que se actualice todo el carrito
-            // Es lo más seguro y limpio (Estilo Profe)
-            window.location.reload(); 
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Acceso Concedido!',
+                    text: 'Bienvenida a RebexTech...',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    // Refrescamos al FrontController para que cargue la sesión
+                    window.location.href = 'FrontController';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Acceso Denegado!',
+                    text: data.mensaje || 'Credenciales incorrectas',
+                    confirmButtonColor: '#6f42c1'
+                });
+            }
+        } catch (error) {
+            // Si el fetch falla (error 404, 500), entrará aquí
+            console.error("Error en login:", error);
         }
-    } catch (error) {
-        console.error("Error en la actualización del carrito:", error);
-    }
-}
+    });
+});

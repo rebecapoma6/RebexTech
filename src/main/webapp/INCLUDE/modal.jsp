@@ -141,4 +141,6 @@
         </div>
     </div>
 </div>
-<script src="${pageContext.request.contextPath}/JS/login.js"></script>
+                    
+<script>const RUTA_LOGIN = "${urlBase}/UsuarioController";</script>
+<script src="${urlBase}/JS/login.js"></script>

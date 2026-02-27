@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // --- 1. CONSTANTES (Estilo Profe) ---
+    // --- 1. CONSTANTES ---
     const inputAvatar = document.getElementById('inputAvatar');
     const avatarPreview = document.getElementById('avatarPreview');
     const formDatos = document.getElementById('formUpdateDatos');
@@ -9,13 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- 2. LÓGICA DE LA IMAGEN (VISTA PREVIA Y SUBIDA) ---
     if (inputAvatar) {
         inputAvatar.addEventListener('change', function (event) {
+
             const archivo = event.target.files[0];
             if (archivo) {
-                // VISTA PREVIA (Como la del profe)
+                // VISTA PREVIA
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     avatarPreview.src = e.target.result;
-                    // Opcional: Cambiar también el mini avatar del Navbar si existe
                     const navAvatar = document.querySelector('img.rounded-circle[width="30"]') ||
                             document.querySelector('.navbar img.rounded-circle');
                     if (navAvatar)
@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         .then(response => response.json())
                         .then(resultado => {
                             if (resultado.status === "success") {
-                                // Alerta pequeña (Toast) para que no interrumpa
                                 const Toast = Swal.mixin({
                                     toast: true,
                                     position: 'top-end',
@@ -62,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('accion', 'updateDatos');
 
             try {
-                const resp = await fetch('../UsuarioController', {method: 'POST', body: formData});
+                const resp = await fetch(URL_PERFIL, {method: 'POST', body: formData});
                 const data = await resp.json();
 
                 if (data.status === 'success') {
@@ -74,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         timerProgressBar: true
                     }).then(() => {
                         window.location.reload();
-
                     });
                 } else {
                     Swal.fire({
@@ -94,8 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formPass) {
         formPass.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Sacamos los valores directamente de los campos del form
             const nPass = formPass.querySelector('input[name="newPass"]').value;
             const cPass = formPass.querySelector('input[name="confirmPass"]').value;
 
@@ -113,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('accion', 'updatePass');
 
             try {
-                const resp = await fetch('../UsuarioController', {method: 'POST', body: formData});
+                const resp = await fetch(URL_PERFIL, {method: 'POST', body: formData});
                 const data = await resp.json();
 
                 if (data.status === 'success') {
@@ -125,8 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        // Esto refresca la página donde estás parado. 
-                        // Si ya estás en perfil.jsp, se queda ahí pero limpia los campos.
                         window.location.reload();
                     });
                 } else {

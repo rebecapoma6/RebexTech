@@ -118,9 +118,9 @@
                 </div>
 
                 <div class="card-footer bg-light p-4 no-print text-center border-0">
-                    <button onclick="window.print()" class="btn btn-outline-dark px-4 fw-bold me-2">
+<!--                    <button onclick="window.print()" class="btn btn-outline-dark px-4 fw-bold me-2">
                         <i class="bi bi-printer me-2"></i> IMPRIMIR
-                    </button>
+                    </button>-->
                     <a href="${baseUrl}/FrontController?accion=inicio" class="btn btn-rebex px-5">
                         VOLVER A LA TIENDA
                     </a>
