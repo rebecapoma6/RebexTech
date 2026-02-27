@@ -26,13 +26,13 @@ public class CarritoController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+      
         HttpSession sesion = request.getSession();
         String accionCarrito = request.getParameter("accionCarrito");
         String idProducto = request.getParameter("idProducto");
         String urlDestino = "/CARRITO/carrito.jsp";
         String datosCarrito = "";
-
+    
         Usuario usuarioLogueado = (Usuario) sesion.getAttribute("usuarioSesion");
 
         // 1. Recuperar cookie si NO hay usuario logueado
@@ -52,7 +52,7 @@ public class CarritoController extends HttpServlet {
         if (accionCarrito != null) {
             DAOFactory fabrica = DAOFactory.getDAOFactory();
             switch (accionCarrito) {
-                case "agregar":
+                case "agregar":                    
                     if (idProducto != null) {
                         if (usuarioLogueado == null) {
                             datosCarrito = datosCarrito.isEmpty() ? idProducto : datosCarrito + "-" + idProducto;
