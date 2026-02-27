@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,73 +20,77 @@ import java.util.List;
 public class PedidoDAO implements IPedidoDAO {
 
     @Override
-    public boolean finalizarPedido(int idUsuario, List<LineaPedido> carrito, double totalImporte) {
+    public short finalizarPedido(int idUsuario, List<LineaPedido> carrito, double totalImporte) {
         Connection con = null;
-    PreparedStatement psPedido = null;
-    PreparedStatement psLinea = null;
-    ResultSet rs = null;
-    boolean exito = false;
+        PreparedStatement psPedido = null;
+        PreparedStatement psLinea = null;
+        ResultSet rs = null;
+        short idPedidoGenerado = 0;
 
-    // Calculamos el IVA basándonos en tu 21%
-    double calculadoIva = totalImporte * 0.21;
-    double importeSinIva = totalImporte - calculadoIva;
+        // Calculamos el IVA basándonos en tu 21%
+        double calculadoIva = totalImporte * 0.21;
+        double importeSinIva = totalImporte - calculadoIva;
 
-    // SQL para el Pedido
-    String sqlPedido = "INSERT INTO pedidos (idusuario, fecha, importe, iva, estado) VALUES (?, NOW(), ?, ?, ?)";
+        // SQL para el Pedido
+        String sqlPedido = "INSERT INTO pedidos (idusuario, fecha, importe, iva, estado) VALUES (?, NOW(), ?, ?, ?)";
 
-    // SQL PARA LAS LÍNEAS (¡Aquí estaba el error! Solo 3 columnas: idpedido, idproducto, cantidad)
-    String sqlLinea = "INSERT INTO lineaspedidos (idpedido, idproducto, cantidad) VALUES (?, ?, ?)";
+        // SQL PARA LAS LÍNEAS (¡Aquí estaba el error! Solo 3 columnas: idpedido, idproducto, cantidad)
+        String sqlLinea = "INSERT INTO lineaspedidos (idpedido, idproducto, cantidad) VALUES (?, ?, ?)";
 
-    try {
-        con = ConnectionFactory.getConnection();
-        con.setAutoCommit(false); // Iniciar Transacción
+        String sqlLastId = "SELECT LAST_INSERT_ID()";
 
-        // 1. Insertar la cabecera del Pedido
-        psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
-        psPedido.setInt(1, idUsuario);
-        psPedido.setDouble(2, importeSinIva);
-        psPedido.setDouble(3, calculadoIva);
-        psPedido.setString(4, String.valueOf(Pedido.ESTADO_FINALIZADO)); 
+        try {
+            con = ConnectionFactory.getConnection();
+            con.setAutoCommit(false); // Iniciar Transacción
 
-        int filasPedido = psPedido.executeUpdate();
+            // 1. Insertar la cabecera del Pedido
+            psPedido = con.prepareStatement(sqlPedido);
+            psPedido.setInt(1, idUsuario);
+            psPedido.setDouble(2, importeSinIva);
+            psPedido.setDouble(3, calculadoIva);
+            psPedido.setString(4, String.valueOf(Pedido.ESTADO_FINALIZADO));
 
-        if (filasPedido > 0) {
-            rs = psPedido.getGeneratedKeys();
-            if (rs.next()) {
-                short idPedidoGenerado = rs.getShort(1);
+            int filasPedido = psPedido.executeUpdate();
 
-                // 2. Insertar las líneas del pedido
-                psLinea = con.prepareStatement(sqlLinea);
-                for (LineaPedido lp : carrito) {
-                    psLinea.setShort(1, idPedidoGenerado);
-                    psLinea.setInt(2, lp.getProducto().getIdproducto());
-                    psLinea.setInt(3, lp.getCantidad());
-                    // ¡OJO! Aquí ya NO ponemos el setDouble del precio_unitario porque lo quitamos del SQL arriba
-                    psLinea.addBatch();
+            if (filasPedido > 0) {
+                psPedido = con.prepareStatement(sqlLastId);
+                rs = psPedido.executeQuery();
+
+                if (rs.next()) {
+                    idPedidoGenerado = rs.getShort(1);
+
+                    // 2. Insertar las líneas del pedido
+                    psLinea = con.prepareStatement(sqlLinea);
+                    for (LineaPedido lp : carrito) {
+                        psLinea.setShort(1, idPedidoGenerado);
+                        psLinea.setInt(2, lp.getProducto().getIdproducto());
+                        psLinea.setInt(3, lp.getCantidad());
+                        // ¡OJO! Aquí ya NO ponemos el setDouble del precio_unitario porque lo quitamos del SQL arriba
+                        psLinea.addBatch();
+                    }
+
+                    psLinea.executeBatch();
+                    con.commit();
+
                 }
-
-                psLinea.executeBatch(); 
-                con.commit(); 
-                exito = true;
             }
+
+        } catch (SQLException e) {
+            System.err.println("Error al finalizar compra: " + e.getMessage());
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            idPedidoGenerado = 0;
+        } finally {
+            Metodos.cerrarRecursos(null, psLinea, null);
+            Metodos.cerrarRecursos(con, psPedido, rs);
         }
 
-    } catch (SQLException e) {
-        System.err.println("Error al finalizar compra: " + e.getMessage());
-        if (con != null) {
-            try {
-                con.rollback(); 
-                System.err.println("Se ha realizado un rollback.");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-    } finally {
-        Metodos.cerrarRecursos(null, psLinea, null); 
-        Metodos.cerrarRecursos(con, psPedido, rs);
-    }
-
-    return exito;
+        return idPedidoGenerado;
     }
 
     @Override
@@ -121,11 +125,12 @@ public class PedidoDAO implements IPedidoDAO {
             } else {
                 // Creamos el pedido usando la constante
                 String sqlCrear = "INSERT INTO pedidos (fecha, estado, idusuario, importe, iva) VALUES (NOW(), '" + Pedido.ESTADO_CARRITO + "', ?, 0, 0)";
-                psCrear = conexionABaseDeDatos.prepareStatement(sqlCrear, java.sql.Statement.RETURN_GENERATED_KEYS);
+                //psCrear = conexionABaseDeDatos.prepareStatement(sqlCrear, java.sql.Statement.RETURN_GENERATED_KEYS);
+                psCrear = conexionABaseDeDatos.prepareStatement(sqlCrear);
                 psCrear.setInt(1, idDelUsuario);
                 psCrear.executeUpdate();
 
-                try (ResultSet rsNuevo = psCrear.getGeneratedKeys()) {
+                try (PreparedStatement psLastId = conexionABaseDeDatos.prepareStatement("SELECT LAST_INSERT_ID()"); ResultSet rsNuevo = psLastId.executeQuery()) {
                     if (rsNuevo.next()) {
                         idPedidoCarrito = rsNuevo.getInt(1);
                     }
@@ -216,14 +221,18 @@ public class PedidoDAO implements IPedidoDAO {
                 idPedido = rsPed.getInt("idpedido");
             } else {
                 String sqlCrear = "INSERT INTO pedidos (fecha, estado, idusuario, importe, iva) VALUES (NOW(), '" + Pedido.ESTADO_CARRITO + "', ?, 0, 0)";
-                psAccion = con.prepareStatement(sqlCrear, Statement.RETURN_GENERATED_KEYS);
+                //psAccion = con.prepareStatement(sqlCrear, Statement.RETURN_GENERATED_KEYS);
+                psAccion = con.prepareStatement(sqlCrear);
                 psAccion.setInt(1, idDelUsuario);
                 psAccion.executeUpdate();
-                rsLinea = psAccion.getGeneratedKeys();
-                if (rsLinea.next()) {
-                    idPedido = rsLinea.getInt(1);
+
+                try (PreparedStatement psLastId = con.prepareStatement("SELECT LAST_INSERT_ID()"); ResultSet rsLastId = psLastId.executeQuery()) {
+                    if (rsLastId.next()) {
+                        idPedido = rsLastId.getInt(1);
+                    }
                 }
-                Metodos.cerrarRecursos(null, psAccion, rsLinea);
+
+                Metodos.cerrarRecursos(null, psAccion, null);
             }
 
             // 2. ¿Ya existe ese producto en ese pedido?
@@ -402,9 +411,9 @@ public class PedidoDAO implements IPedidoDAO {
 
         // Unimos con productos para sacar el nombre, imagen y precio
         String sql = "SELECT lp.*, p.nombre, p.imagen, p.precio "
-            + "FROM lineaspedidos lp " 
-            + "JOIN productos p ON lp.idproducto = p.idproducto "
-            + "WHERE lp.idpedido = ?";
+                + "FROM lineaspedidos lp "
+                + "JOIN productos p ON lp.idproducto = p.idproducto "
+                + "WHERE lp.idpedido = ?";
         try {
             con = ConnectionFactory.getConnection();
             ps = con.prepareStatement(sql);

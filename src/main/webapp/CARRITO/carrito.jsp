@@ -183,6 +183,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${baseUrl}/JS/validaciones.js"></script>
         <script src="${baseUrl}/JS/registro.js"></script>
+        <script>const RUTA_CARRITO = "${baseUrl}/CarritoController";</script>
         <script src="${baseUrl}/JS/carrito.js"></script>
 
     </body>

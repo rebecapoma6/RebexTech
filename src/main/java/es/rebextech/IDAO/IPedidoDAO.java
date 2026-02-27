@@ -10,7 +10,7 @@ import java.util.List;
  * @author User
  */
 public interface IPedidoDAO {
-    public boolean finalizarPedido(int idUsuario, List<LineaPedido> carrito, double totalImporte);
+    public short finalizarPedido(int idUsuario, List<LineaPedido> carrito, double totalImporte);
     public void migrarCarritoDeCookieABaseDeDatos(int idDelUsuario, String contenidoDeLaCookie);
     // Método para agregar un solo producto al carrito de un usuario logueado
     public void agregarUnProductoAlCarritoBD(int idDelUsuario, int idDelProducto);

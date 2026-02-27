@@ -50,13 +50,14 @@ public class CarritoController extends HttpServlet {
 
         // 2. ACCIONES DEL CARRITO (Organizadas en Switch)
         if (accionCarrito != null) {
+            DAOFactory fabrica = DAOFactory.getDAOFactory();
             switch (accionCarrito) {
                 case "agregar":
                     if (idProducto != null) {
                         if (usuarioLogueado == null) {
                             datosCarrito = datosCarrito.isEmpty() ? idProducto : datosCarrito + "-" + idProducto;
                         } else {
-                            DAOFactory.getDAOFactory().getPedidoDAO()
+                            fabrica.getPedidoDAO()
                                     .agregarUnProductoAlCarritoBD(usuarioLogueado.getIdusuario(), Integer.parseInt(idProducto));
                         }
                     }
@@ -69,13 +70,15 @@ public class CarritoController extends HttpServlet {
                             StringBuilder nuevaCadena = new StringBuilder();
                             for (String id : ids) {
                                 if (!id.equals(idProducto)) {
-                                    if (nuevaCadena.length() > 0) nuevaCadena.append("-");
+                                    if (nuevaCadena.length() > 0) {
+                                        nuevaCadena.append("-");
+                                    }
                                     nuevaCadena.append(id);
                                 }
                             }
                             datosCarrito = nuevaCadena.toString();
                         } else {
-                            DAOFactory.getDAOFactory().getPedidoDAO()
+                            fabrica.getPedidoDAO()
                                     .eliminarProductoDelCarritoBD(usuarioLogueado.getIdusuario(), Integer.parseInt(idProducto));
                         }
                     }
@@ -85,64 +88,105 @@ public class CarritoController extends HttpServlet {
                     if (usuarioLogueado == null) {
                         datosCarrito = "";
                     } else {
-                        DAOFactory.getDAOFactory().getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());
+                        fabrica.getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());
                     }
                     break;
 
                 case "actualizarCantidadCarrito":
-                    if (usuarioLogueado != null) {
-                        int idProd = Integer.parseInt(request.getParameter("id"));
-                        int nuevaCant = Integer.parseInt(request.getParameter("cantidad"));
-                        DAOFactory fabrica = DAOFactory.getDAOFactory();
-                        fabrica.getPedidoDAO().actualizarCantidadProductoBD(usuarioLogueado.getIdusuario(), idProd, nuevaCant);
 
+                    int idProd = Integer.parseInt(request.getParameter("id"));
+                    int nuevaCant = Integer.parseInt(request.getParameter("cantidad"));
+                    double nuevoSubtotal = 0;
+                    double nuevoTotal = 0;
+                    int totalItemsGlobal = 0;
+
+                    if (usuarioLogueado != null) {
+                        // CASO LOGUEADO: Base de Datos
+                        fabrica.getPedidoDAO().actualizarCantidadProductoBD(usuarioLogueado.getIdusuario(), idProd, nuevaCant);
                         List<LineaPedido> listaLineas = fabrica.getProductoDAO().getProductosCarritoBD(usuarioLogueado.getIdusuario());
-                        double nuevoSubtotal = 0;
-                        double nuevoTotal = 0;
-                        int totalItemsBD = 0;
                         for (LineaPedido lp : listaLineas) {
                             if (lp.getProducto().getIdproducto() == idProd) {
                                 nuevoSubtotal = lp.getSubtotal();
                             }
                             nuevoTotal += lp.getSubtotal();
-                            totalItemsBD += lp.getCantidad(); // <--- SUMAMOS PARA EL NAVBAR
+                            totalItemsGlobal += lp.getCantidad();
                         }
-                        sesion.setAttribute("cantidadProductos", totalItemsBD);
-                        response.setContentType("application/json");
-                        response.setCharacterEncoding("UTF-8");
-                        
-                        response.getWriter().print("{\"status\":\"success\","
-                                + "\"nuevoSubtotal\":\"" + String.format("%.2f", nuevoSubtotal) + "\","
-                                + "\"nuevoTotal\":\"" + String.format("%.2f", nuevoTotal) + "\","
-                                + "\"nuevoContador\":\"" + totalItemsBD + "\"}");
-                        return; 
+                    } else {
+                        // CASO ANÓNIMO: Reconstruir Cookie
+                        String[] idsActuales = datosCarrito.split("-");
+                        StringBuilder nuevaCadenaCookie = new StringBuilder();
+                        // Agregar los demás productos
+                        for (String id : idsActuales) {
+                            if (!id.equals(String.valueOf(idProd)) && !id.isEmpty()) {
+                                if (nuevaCadenaCookie.length() > 0) {
+                                    nuevaCadenaCookie.append("-");
+                                }
+                                nuevaCadenaCookie.append(id);
+                            }
+                        }
+                        // Agregar el actual N veces
+                        for (int i = 0; i < nuevaCant; i++) {
+                            if (nuevaCadenaCookie.length() > 0) {
+                                nuevaCadenaCookie.append("-");
+                            }
+                            nuevaCadenaCookie.append(idProd);
+                        }
+                        datosCarrito = nuevaCadenaCookie.toString();
+
+                        // Calcular totales para la respuesta
+                        List<Producto> listaProdsCoke = fabrica.getProductoDAO().getProductosCarrito(datosCarrito.split("-"));
+                        for (Producto p : listaProdsCoke) {
+                            if (p.getIdproducto() == idProd) {
+                                nuevoSubtotal = p.getPrecio() * nuevaCant;
+                                nuevoTotal += nuevoSubtotal;
+                                totalItemsGlobal += nuevaCant;
+                            } else {
+                                nuevoTotal += p.getPrecio(); // Asumiendo 1 de cada uno de los otros
+                                totalItemsGlobal += 1;
+                            }
+                        }
+                        Cookie c = new Cookie("carritoRebex", datosCarrito);
+                        c.setPath("/");
+                        c.setMaxAge(60 * 60 * 24 * 2);
+                        response.addCookie(c);
                     }
-                    break;
+
+                    // Respuesta JSON
+                    sesion.setAttribute("cantidadProductos", totalItemsGlobal);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    String json = "{\"status\":\"success\","
+                            + "\"nuevoSubtotal\":\"" + String.format("%.2f", nuevoSubtotal).replace(",", ".") + "\","
+                            + "\"nuevoTotal\":\"" + String.format("%.2f", nuevoTotal).replace(",", ".") + "\","
+                            + "\"nuevoContador\":\"" + totalItemsGlobal + "\"}";
+                    response.getWriter().print(json);
+                    return;
 
                 case "finalizarCompra":
                     if (usuarioLogueado != null) {
-                        DAOFactory fabrica = DAOFactory.getDAOFactory();
+
                         // Recuperamos lo que el usuario tiene en el carrito antes de borrar
                         List<LineaPedido> carritoFinal = fabrica.getProductoDAO().getProductosCarritoBD(usuarioLogueado.getIdusuario());
-                        
+
                         double totalFinal = 0;
                         for (LineaPedido lp : carritoFinal) {
                             totalFinal += lp.getSubtotal();
                         }
 
-                        // Guardamos el pedido en estado 'f'
-                        boolean ok = fabrica.getPedidoDAO().finalizarPedido(usuarioLogueado.getIdusuario(), carritoFinal, totalFinal);
-                        System.out.println("DEBUG: ¿Resultado del DAO?: " + ok);
-                        if (ok) {
+                        //El DAO ahora devuelve un short (el ID del pedido)
+                        short idGenerado = fabrica.getPedidoDAO().finalizarPedido(usuarioLogueado.getIdusuario(), carritoFinal, totalFinal);
+
+                        if (idGenerado > 0) {
                             // Pasamos datos a la factura (detallePedido.jsp)
+                            request.setAttribute("idPedidoGenerado", idGenerado);
                             request.setAttribute("listaProductos", carritoFinal);
                             request.setAttribute("totalPrecio", totalFinal);
-                            
+
                             // Limpiamos carrito de la BD y de la sesión
                             fabrica.getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());
                             sesion.setAttribute("cantidadProductos", 0);
                             System.out.println("DEBUG: Redirigiendo a detallePedido.jsp");
-                            
+
                             // Mostramos la factura
                             request.getRequestDispatcher("/USUARIO/detallePedido.jsp").forward(request, response);
                             return;
@@ -153,8 +197,10 @@ public class CarritoController extends HttpServlet {
         }
 
         // 3. VISUALIZACIÓN DEL CARRITO (Carga de datos para el JSP)
-        if (usuarioLogueado != null) {
-            DAOFactory fabrica = DAOFactory.getDAOFactory();
+        DAOFactory fabrica = DAOFactory.getDAOFactory();
+        if (usuarioLogueado
+                != null) {
+
             List<LineaPedido> listaLineas = fabrica.getProductoDAO().getProductosCarritoBD(usuarioLogueado.getIdusuario());
             double total = 0;
             int totalItemsBD = 0;
@@ -188,7 +234,7 @@ public class CarritoController extends HttpServlet {
                     listaParaJSP.add(lp);
                     total += p.getPrecio();
                 }
-                request.setAttribute("listaProductos", listaParaJSP); 
+                request.setAttribute("listaProductos", listaParaJSP);
                 request.setAttribute("totalPrecio", total);
                 request.setAttribute("carritoVacio", false);
             }
@@ -196,7 +242,8 @@ public class CarritoController extends HttpServlet {
         }
 
         // 4. REDIRECCIÓN FINAL
-        if (accionCarrito != null && !"actualizarCantidadCarrito".equals(accionCarrito)) {
+        if (accionCarrito
+                != null && !"actualizarCantidadCarrito".equals(accionCarrito)) {
             sesion.setAttribute("verCarritoDespues", true);
             response.sendRedirect("FrontController");
         } else {

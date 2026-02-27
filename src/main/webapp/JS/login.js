@@ -1,51 +1,32 @@
-// login.js
-const LOGIN_AJAX = 'UsuarioController';
+const AJAX_CARRITO = 'CarritoController';
 
-document.addEventListener("DOMContentLoaded", () => {
-    const formLogin = document.getElementById('formLogin');
+async function cambiarCantidad(idProductoSeleccionado, valorCambio) {
+    const etiquetaCantidadActual = document.getElementById(`cant-${idProductoSeleccionado}`);
+    const cantidadActual = parseInt(etiquetaCantidadActual.innerText);
+    let cantidadCalculada = cantidadActual + valorCambio;
 
-    formLogin?.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (cantidadCalculada < 1) return;
 
-        // Obtenemos los datos del formulario
-        const formData = new FormData(formLogin);
+    const parametrosPeticion = new URLSearchParams();
+    parametrosPeticion.append("accionCarrito", "actualizarCantidadCarrito");
+    parametrosPeticion.append("id", idProductoSeleccionado);
+    parametrosPeticion.append("cantidad", cantidadCalculada);
 
-        // Convertimos el FormData a una cadena tipo URL: email=user@test.com&password=123&accion=login
-        const dataURL = new URLSearchParams(formData).toString();
+    try {
+        const respuestaServidor = await fetch(AJAX_CARRITO, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: parametrosPeticion
+        });
 
-        try {
-            const resp = await fetch(LOGIN_AJAX, {
-                method: 'POST',
-                body: dataURL, // Mandamos la cadena de texto
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded' // Estilo Profe
-                }
-            });
+        const datosActualizados = await respuestaServidor.json();
 
-            const data = await resp.json();
-
-            if (data.status === 'success') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Acceso Concedido!',
-                    text: 'Bienvenida a RebexTech, estamos cargando tu sesión...',
-                    showConfirmButton: false,
-                    timer: 2000, // 2 segundos de gloria
-                    timerProgressBar: true
-                }).then(() => {
-                    // Recién cuando termina el tiempo, nos vamos al FrontController
-                    window.location.href = 'FrontController';
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Acceso Denegado!',
-                    text: data.mensaje,
-                    confirmButtonColor: '#6f42c1'
-                });
-            }
-        } catch (error) {
-            console.error("Error en login:", error);
+        if (datosActualizados.status === "success") {
+            // Recargamos la página para que se actualice todo el carrito
+            // Es lo más seguro y limpio (Estilo Profe)
+            window.location.reload(); 
         }
-    });
-});
+    } catch (error) {
+        console.error("Error en la actualización del carrito:", error);
+    }
+}
