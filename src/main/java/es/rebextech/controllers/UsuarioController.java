@@ -54,11 +54,24 @@ public class UsuarioController extends HttpServlet {
                             }
                         }
                     }
+
+                    // ============================================================
+                    // INDICACIÓN DE JESÚS: VOLCADO DE CARRITO ANÓNIMO
+                    // ============================================================
                     if (contenidoCarrito != null && !contenidoCarrito.isEmpty()) {
-                        fabrica.getPedidoDAO().migrarCarritoDeCookieABaseDeDatos(user.getIdusuario(), contenidoCarrito);
+                        // Comprobamos la fecha de último acceso como pidió el profesor
+                        if (user.getUltimo_acceso() != null) {
+                            // Si NO es null, volcamos los productos de la cookie a la BBDD
+                            fabrica.getPedidoDAO().migrarCarritoDeCookieABaseDeDatos(user.getIdusuario(), contenidoCarrito);
+                            System.out.println("DEBUG: Se migró la cookie a la BBDD para el usuario " + user.getNombre());
+                        }
+                        
+                        // En cualquier caso, si había cookie, la borramos para limpiar
                         Metodos.eliminarCookieCarrito(response);
                         sesion.removeAttribute("cantidadProductos");
                     }
+                    // ============================================================
+
                     fabrica.getUsuarioDAO().actualizarUltimoAcceso(user.getIdusuario());
                     sesion.setAttribute("usuarioSesion", user);
                     sesion.setAttribute("alerta", "¡Bienvenido de nuevo, " + user.getNombre() + "!");
