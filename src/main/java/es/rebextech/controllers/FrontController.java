@@ -1,7 +1,10 @@
 package es.rebextech.controllers;
 
 import es.rebextech.IDAO.DAOFactory;
+import es.rebextech.beans.LineaPedido;
+import es.rebextech.beans.Pedido;
 import es.rebextech.beans.Producto;
+import es.rebextech.beans.Usuario;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -30,7 +33,7 @@ public class FrontController extends HttpServlet {
         HttpSession sesion = request.getSession();
         String urlDestino = "index.jsp";
         DAOFactory fabrica = DAOFactory.getDAOFactory();
-
+        Usuario usuarioLogueado = (Usuario) sesion.getAttribute("usuarioSesion");
         // ============================================================
         // EL TRUCO PARA LA URL LIMPIA (Solo añade estas 4 líneas)
         // ============================================================
@@ -62,6 +65,43 @@ public class FrontController extends HttpServlet {
                 case "registro":
                     urlDestino = "RegistroController";
                     break;             
+                case "historialPedidos":
+                    if (usuarioLogueado != null) {
+                        // Traemos la lista del DAO filtrada por usuario y estado 'f'
+                        List<Pedido> listaHistorial = fabrica.getPedidoDAO().getHistorialPedidos(usuarioLogueado.getIdusuario());               
+                        request.setAttribute("historialPedidos", listaHistorial);
+                        urlDestino = "/USUARIO/historialPedidos.jsp";
+                    } else {
+                        // Si no está logueado, lo mandamos al inicio
+                        urlDestino = "index.jsp";
+                    }
+                    break;
+                case "verDetallePedido":
+                    if (usuarioLogueado != null) {
+                        // 1. Atrapamos el ID del pedido que viene del botón
+                        int idPed = Integer.parseInt(request.getParameter("id"));
+                        
+                        // 2. Buscamos todas las líneas (productos) de ese pedido
+                        List<LineaPedido> detalleLineas = fabrica.getPedidoDAO().getLineasPorIdPedido(idPed);
+                        
+                        // 3. Calculamos el total sumando (precio * cantidad) de cada línea
+                        double totalFactura = 0;
+                        for (LineaPedido lp : detalleLineas) {
+                            totalFactura += (lp.getProducto().getPrecio() * lp.getCantidad());
+                        }
+                        
+                        // 4. Mandamos los datos a la vista (detallePedido.jsp)
+                        request.setAttribute("idPedidoGenerado", idPed);
+                        request.setAttribute("listaProductos", detalleLineas);
+                        request.setAttribute("totalPrecio", totalFactura);
+                        // Ojo: No mandamos "totalFinal" para que no salga el cartel verde de "Pago Exitoso" en facturas viejas
+                        
+                        urlDestino = "/USUARIO/detallePedido.jsp";
+                    } else {
+                        urlDestino = "index.jsp";
+                    }
+                    break;
+                    
                 default:
                     urlDestino = "index.jsp";
                     break;

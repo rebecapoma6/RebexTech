@@ -310,3 +310,27 @@ body.modal-open {
     border-radius: 15px;
     border: 1px solid var(--gris-input);
 }
+
+
+/* ========================================= */
+/* ESTILOS PARA LA FACTURA (detallePedido)   */
+/* ========================================= */
+.ticket-bg {
+    background-color: #f8f9fa;
+    border-radius: 20px;
+}
+.factura-header {
+    border-bottom: 2px dashed #dee2e6;
+}
+
+/* Ocultar elementos al imprimir (Ctrl+P) */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    /* Le damos más peso con "body" para no usar el "important" */
+    body .ticket-bg {
+        background-color: white;
+    }
+}

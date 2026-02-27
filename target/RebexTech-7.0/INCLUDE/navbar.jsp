@@ -100,7 +100,7 @@
                                 <li><a class="dropdown-item" href="${url}/USUARIO/perfil.jsp">Mi Perfil</a></li>
                                 <li>
                                     <form action="${url}/FrontController" method="POST" style="margin:0;">
-                                        <input type="hidden" name="accion" value="verPedidos">
+                                        <input type="hidden" name="accion" value="historialPedidos">
                                         <button type="submit" class="dropdown-item">Mis Pedidos</button>
                                     </form>
                                 </li>

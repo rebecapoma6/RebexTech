@@ -111,6 +111,7 @@ public class CarritoController extends HttpServlet {
                             request.setAttribute("idPedidoGenerado", idGenerado);
                             request.setAttribute("listaProductos", carritoFinal);
                             request.setAttribute("totalPrecio", totalFinal);
+                            request.setAttribute("totalFinal", true);
 
                             // Limpiamos carrito de la BD y de la sesión
                             fabrica.getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());

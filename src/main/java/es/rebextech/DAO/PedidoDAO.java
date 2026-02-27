@@ -348,7 +348,7 @@ public class PedidoDAO implements IPedidoDAO {
     }
 
     @Override
-    public List<Pedido> getPedidosPorUsuario(int idUsuario) {
+    public List<Pedido> getHistorialPedidos(int idUsuario) {
         List<Pedido> lista = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -425,8 +425,12 @@ public class PedidoDAO implements IPedidoDAO {
 
                 Producto p = new Producto();
                 p.setNombre(rs.getString("nombre"));
-                p.setImagen(rs.getString("imagen"));
                 p.setPrecio(rs.getDouble("precio"));
+                String imgBD = rs.getString("imagen");
+                if (imgBD != null && !imgBD.toLowerCase().endsWith(".jpg")) {
+                    imgBD += ".jpg";
+                }
+                p.setImagen(imgBD); 
 
                 lp.setProducto(p);
                 lista.add(lp);
