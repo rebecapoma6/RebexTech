@@ -173,7 +173,7 @@
         <jsp:include page="/INCLUDE/modal.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+        <script>const URL_AJAX = "${pageContext.request.contextPath}/AjaxController";</script>
         <script src="${pageContext.request.contextPath}/JS/validaciones.js"></script>
         <script src="${pageContext.request.contextPath}/JS/registro.js"></script>
     </body>

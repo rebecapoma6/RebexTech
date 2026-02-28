@@ -1,4 +1,4 @@
-const URL_AJAX = 'AjaxController';
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const campoDNI = document.getElementById('nifInput');
