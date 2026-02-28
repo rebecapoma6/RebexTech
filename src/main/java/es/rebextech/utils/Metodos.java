@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
  * de contraseñas mediante el algoritmo MD5 y el cierre seguro de los recursos 
  * de la base de datos (Connection, PreparedStatement, ResultSet).
  * @author Rebeca Poma
+ * 
  */
 public class Metodos {
 
