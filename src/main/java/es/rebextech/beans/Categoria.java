@@ -1,11 +1,11 @@
-
 package es.rebextech.beans;
-
 import java.io.Serializable;
 
 /**
- *
- * @author User
+ * Clase Bean (Categoria) que define una familia o categoría de productos.
+ * Mapea la tabla 'categorias' y se carga en el contexto global de la aplicación 
+ * al iniciar el servidor para estar disponible en los menús de navegación.
+ * * @author Rebeca
  */
 public class Categoria implements Serializable {
 

@@ -1,5 +1,4 @@
 package es.rebextech.DAO;
-
 import es.rebextech.IDAO.IPedidoDAO;
 import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Pedido;
@@ -9,13 +8,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author User
+ * Implementación concreta en MySQL de la interfaz IPedidoDAO.
+ * Utiliza transacciones manuales (commit/rollback) para garantizar la integridad 
+ * de los datos al momento de transformar un carrito en una factura finalizada.
+ * @author Rebeca
  */
 public class PedidoDAO implements IPedidoDAO {
 
@@ -34,7 +34,7 @@ public class PedidoDAO implements IPedidoDAO {
         // SQL para el Pedido
         String sqlPedido = "INSERT INTO pedidos (idusuario, fecha, importe, iva, estado) VALUES (?, NOW(), ?, ?, ?)";
 
-        // SQL PARA LAS LÍNEAS (¡Aquí estaba el error! Solo 3 columnas: idpedido, idproducto, cantidad)
+        // SQL PARA LAS LÍNEAS (idpedido, idproducto, cantidad)
         String sqlLinea = "INSERT INTO lineaspedidos (idpedido, idproducto, cantidad) VALUES (?, ?, ?)";
 
         String sqlLastId = "SELECT LAST_INSERT_ID()";
@@ -64,8 +64,7 @@ public class PedidoDAO implements IPedidoDAO {
                     for (LineaPedido lp : carrito) {
                         psLinea.setShort(1, idPedidoGenerado);
                         psLinea.setInt(2, lp.getProducto().getIdproducto());
-                        psLinea.setInt(3, lp.getCantidad());
-                        // ¡OJO! Aquí ya NO ponemos el setDouble del precio_unitario porque lo quitamos del SQL arriba
+                        psLinea.setInt(3, lp.getCantidad());                     
                         psLinea.addBatch();
                     }
 
@@ -125,7 +124,6 @@ public class PedidoDAO implements IPedidoDAO {
             } else {
                 // Creamos el pedido usando la constante
                 String sqlCrear = "INSERT INTO pedidos (fecha, estado, idusuario, importe, iva) VALUES (NOW(), '" + Pedido.ESTADO_CARRITO + "', ?, 0, 0)";
-                //psCrear = conexionABaseDeDatos.prepareStatement(sqlCrear, java.sql.Statement.RETURN_GENERATED_KEYS);
                 psCrear = conexionABaseDeDatos.prepareStatement(sqlCrear);
                 psCrear.setInt(1, idDelUsuario);
                 psCrear.executeUpdate();
@@ -221,7 +219,6 @@ public class PedidoDAO implements IPedidoDAO {
                 idPedido = rsPed.getInt("idpedido");
             } else {
                 String sqlCrear = "INSERT INTO pedidos (fecha, estado, idusuario, importe, iva) VALUES (NOW(), '" + Pedido.ESTADO_CARRITO + "', ?, 0, 0)";
-                //psAccion = con.prepareStatement(sqlCrear, Statement.RETURN_GENERATED_KEYS);
                 psAccion = con.prepareStatement(sqlCrear);
                 psAccion.setInt(1, idDelUsuario);
                 psAccion.executeUpdate();

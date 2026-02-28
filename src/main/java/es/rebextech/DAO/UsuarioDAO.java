@@ -1,5 +1,4 @@
 package es.rebextech.DAO;
-
 import es.rebextech.IDAO.IUsuarioDAO;
 import es.rebextech.beans.Usuario;
 import es.rebextech.utils.Metodos;
@@ -10,7 +9,9 @@ import java.sql.SQLException;
 
 
 /**
- *
+ * Implementación concreta en MySQL de la interfaz IUsuarioDAO.
+ * Contiene todas las sentencias SQL preparadas (PreparedStatement) para gestionar 
+ * el CRUD y la autenticación de la tabla 'usuarios'.
  * @author User
  */
 public class UsuarioDAO implements IUsuarioDAO {
@@ -22,7 +23,7 @@ public class UsuarioDAO implements IUsuarioDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        // Importante: Ciframos la clave que nos da el usuario para compararla con la de la BD
+        //Encriptamos AQUI tambien para iniciar sesion
         String passCifrada = Metodos.encriptar(password);
 
         String sql = "SELECT * FROM usuarios WHERE email = ? AND password = ?";
@@ -52,8 +53,7 @@ public class UsuarioDAO implements IUsuarioDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            // ¡Usamos tu método utilitario!
+        } finally {            
             Metodos.cerrarRecursos(con, ps, rs);
         }
         return user;

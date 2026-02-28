@@ -1,8 +1,13 @@
 package es.rebextech.beans;
-
 import java.io.Serializable;
 
 
+/**
+ * Clase Bean (Producto) que representa un artículo disponible en el catálogo de RebexTech.
+ * Mapea los datos de la tabla 'productos' e incluye la información necesaria 
+ * para mostrarse tanto en la tienda como en los detalles de las facturas.
+ * * @author Rebeca
+ */
 public class Producto implements Serializable {
 
     private short idproducto;

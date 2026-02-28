@@ -17,8 +17,9 @@ public class ConnectionFactory {
     private static final String DATA_SOURCE = "java:comp/env/jdbc/RebexTechDS";
 
     /**
-     * Obtiene una conexión del Pool configurado en el servidor.
-     * @return Connection o null si hay error
+     *Solicita una conexión libre al Pool de conexiones de Tomcat.
+     *@return Un objeto Connection listo para ejecutar consultas SQL.
+     *@ throws SQLException Si el Pool se agota o hay un error de red con MySQL.
      */
     public static Connection getConnection() {
         Connection conexion = null;

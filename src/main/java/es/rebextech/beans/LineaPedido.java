@@ -1,11 +1,11 @@
-
 package es.rebextech.beans;
-
 import java.io.Serializable;
 
 /**
- *
- * @author User
+ * Clase Bean (LieneaPedido) que representa el detalle individual de un carrito o factura.
+ * Mapea la tabla 'lineaspedidos' y actúa como un intermediario o puente
+ * uniendo un objeto Producto con una cantidad específica comprada.
+ * * @author Rebeca
  */
 public class LineaPedido implements Serializable {
 
@@ -62,6 +62,11 @@ public class LineaPedido implements Serializable {
         this.cantidad = cantidad;
     }
     
+    /**
+     *Calcula el precio total de esta línea multiplicando el precio unitario
+     *del producto por la cantidad solicitada por el usuario.
+     *@return El subtotal de la línea en formato decimal (double).
+     */
     public double getSubtotal() {
         if (this.producto != null) {
             return this.producto.getPrecio() * this.cantidad;

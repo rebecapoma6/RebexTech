@@ -1,11 +1,12 @@
 package es.rebextech.beans;
-
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
- * @author User
+ * Clase Bean (Usuario) que representa a un cliente registrado en la tienda RebexTech.
+ * Se encarga de mapear los datos de la tabla 'usuarios' de la base de datos 
+ * y se utiliza para mantener la sesión activa y gestionar el perfil del cliente.
+ * * @author Rebeca
  */
 public class Usuario implements Serializable {
 

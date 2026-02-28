@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.Usuario;
 import es.rebextech.utils.Metodos;
@@ -7,7 +6,6 @@ import static java.io.File.separator;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +13,13 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 @javax.servlet.annotation.MultipartConfig
+/**
+ * Servlet central para la gestión completa del dominio de Clientes.
+ * Se encarga de procesar la autenticación (Login), la destrucción de la sesión (Logout), 
+ * y la administración del perfil privado (actualización de datos, cambio de contraseña 
+ * y subida de imágenes de avatar mediante peticiones Multipart).
+ * @author Rebeca
+ */
 public class UsuarioController extends HttpServlet {
 
     @Override
@@ -28,7 +33,7 @@ public class UsuarioController extends HttpServlet {
             throws ServletException, IOException {
         
         String accion = request.getParameter("accion");
-        if (accion == null) accion = ""; // Evita errores si la acción llega nula
+        if (accion == null) accion = "";
         
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         HttpSession sesion = request.getSession();
@@ -55,9 +60,7 @@ public class UsuarioController extends HttpServlet {
                         }
                     }
 
-                    // ============================================================
-                    // INDICACIÓN DE JESÚS: VOLCADO DE CARRITO ANÓNIMO
-                    // ============================================================
+                    // Aqui volcamos el carrito de usuario anónimo 
                     if (contenidoCarrito != null && !contenidoCarrito.isEmpty()) {
                         // Comprobamos la fecha de último acceso como pidió el profesor
                         if (user.getUltimo_acceso() != null) {

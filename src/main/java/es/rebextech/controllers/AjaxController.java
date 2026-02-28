@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Producto;
@@ -7,7 +6,6 @@ import es.rebextech.beans.Usuario;
 import java.io.IOException;
 import java.util.List;
 import org.json.JSONObject;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ * Servlet especializado en atender peticiones asíncronas (AJAX) desde el cliente.
+ * Permite realizar validaciones en tiempo real sin recargar la página, 
+ * como verificar la disponibilidad de un Email, calcular la letra del NIF 
+ * y actualizar dinámicamente las cantidades de productos en el carrito.
  * @author User
  */
 public class AjaxController extends HttpServlet {
@@ -108,7 +109,6 @@ public class AjaxController extends HttpServlet {
                             }
                         }
 
-                        // Reconstruimos la cadena de la cookie
                         // Reconstruimos la cadena de la cookie
                         String[] idsActuales = datosCarrito.split("-");
                         StringBuilder nuevaCadenaCookie = new StringBuilder();

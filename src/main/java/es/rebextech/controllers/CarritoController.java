@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.DAO.ProductoDAO;
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.LineaPedido;
@@ -15,6 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
+/**
+ * Servlet central para la lógica comercial de la tienda.
+ * Gestiona el ciclo de vida del carrito de compras: desde añadir/eliminar productos
+ * (trabajando con Cookies para anónimos o BD para registrados) hasta 
+ * el procesamiento final del pago (Checkout) que genera la factura.
+ * @author Rebeca
+ * 
+ */
 public class CarritoController extends HttpServlet {
 
     @Override

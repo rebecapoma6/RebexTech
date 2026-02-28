@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.Usuario;
 import es.rebextech.utils.Metodos;
@@ -17,9 +16,17 @@ import org.apache.commons.beanutils.BeanUtils;
 
 @MultipartConfig(
         fileSizeThreshold = 1024 * 10, // 10 KB
-        maxFileSize = 1024 * 100, // 100 KB (Restricción del profesor)
+        maxFileSize = 1024 * 100, // 100 KB (Restricción indicada)
         maxRequestSize = 1024 * 500 // 500 KB total
 )
+
+/**
+ * Servlet encargado de procesar la inscripción de nuevos clientes.
+ * Utiliza la librería BeanUtils para poblar automáticamente el objeto Usuario
+ * a partir de los datos del formulario. También invoca la encriptación MD5 
+ * para la contraseña antes de delegar la inserción al DAO.
+ * @author Rebeca
+ */
 public class RegistroController extends HttpServlet {
 
     @Override
@@ -54,12 +61,12 @@ public class RegistroController extends HttpServlet {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Todos los campos son obligatorios.\"}");
                 return;
             }
-
+            //CONTRASEÑAS
             if (!contrasenia1.equals(contrasenia2)) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Las contraseñas no coinciden.\"}");
                 return;
             }
-             //REVISAMOS EL NIF (Esto es lo que te faltaba para que sea perfecto)
+             //NIF
             if (fabrica.getUsuarioDAO().existeNif(nif.toUpperCase().trim())) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Este NIF ya pertenece a otra cuenta.\"}");
                 return;
@@ -73,7 +80,7 @@ public class RegistroController extends HttpServlet {
 
             if (fabrica.getUsuarioDAO().existeEmail(email)) {
                 response.getWriter().print("{\"status\":\"error\", \"mensaje\":\"Este correo ya está registrado.\"}");
-                return; // IMPORTANTE: Cortamos la ejecución aquí
+                return; 
             }
 
             if (!Metodos.esCPValido(cp)) {
@@ -120,7 +127,7 @@ public class RegistroController extends HttpServlet {
             int idGenerado = fabrica.getUsuarioDAO().registrarUsuario(nuevoUsuario); //AQUI GUARDO DE MI USUARIODAO el metodo
 
             if (idGenerado > 0) {
-                // ¡AQUÍ ESTABA EL TRUCO! Le asignamos el ID generado al objeto en memoria
+                // Le asignamos el ID generado al objeto en memoria
                 nuevoUsuario.setIdusuario((short) idGenerado);
 
                 // --- LÓGICA DE MIGRACIÓN DE CARRITO (Igual que en Login) ---

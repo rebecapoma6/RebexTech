@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
- * @author User
+ * Mapea la tabla 'pedidos' y maneja constantes estáticas (ESTADO_CARRITO, ESTADO_FINALIZADO)
+ * para transicionar el estado del carrito a una factura confirmada.
+ * * @author Rebeca
  */
 public class Pedido implements Serializable {
 

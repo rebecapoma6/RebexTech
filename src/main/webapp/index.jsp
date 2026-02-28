@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="urlIndex" value="${pageContext.request.contextPath}" />
 <c:set var="imgBase" value="${pageContext.request.contextPath}/IMAGENES/productos" />
 <c:set var="estilo" value="${pageContext.request.contextPath}/CSS/style.css" />
 
@@ -173,8 +174,8 @@
         <jsp:include page="/INCLUDE/modal.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>const URL_AJAX = "${pageContext.request.contextPath}/AjaxController";</script>
-        <script src="${pageContext.request.contextPath}/JS/validaciones.js"></script>
-        <script src="${pageContext.request.contextPath}/JS/registro.js"></script>
+        <script>const URL_AJAX = "${urlIndex}/AjaxController";</script>
+        <script src="${urlIndex}/JS/validaciones.js"></script>
+        <script src="${urlIndex}/JS/registro.js"></script>
     </body>
 </html>

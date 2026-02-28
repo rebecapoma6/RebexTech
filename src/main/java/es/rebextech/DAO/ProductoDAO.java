@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author User
+ * Implementación concreta en MySQL de la interfaz IProductoDAO.
+ * Se encarga de ejecutar las consultas SQL complejas para los filtros, 
+ * búsquedas dinámicas y la extracción del catálogo desde la tabla 'productos'.
+ * @author Rebeca
+ * 
  */
 public class ProductoDAO implements IProductoDAO {
 
@@ -28,7 +31,6 @@ public class ProductoDAO implements IProductoDAO {
             return lista;
         }
 
-        // Creamos una consulta dinámica: SELECT * FROM productos WHERE idproducto IN (14, 36, 25)
         StringBuilder sql = new StringBuilder("SELECT * FROM productos WHERE idproducto IN (");
         for (int i = 0; i < ids.length; i++) {
             sql.append(ids[i]).append(i < ids.length - 1 ? "," : "");
@@ -55,19 +57,7 @@ public class ProductoDAO implements IProductoDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception e) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (Exception e) {
-            }
-            ConnectionFactory.closeConexion(con);
+          Metodos.cerrarRecursos(con, ps, rs);
         }
         return lista;
     }
@@ -101,27 +91,14 @@ public class ProductoDAO implements IProductoDAO {
                     imgBD += ".jpg";
                 }
 
-                p.setImagen(imgBD); // Ahora p.imagen vale: "graficas/14259388993036489.jpg"
+                p.setImagen(imgBD); 
                 lista.add(p);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Cierre manual consistente con el resto del DAO
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception e) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (Exception e) {
-            }
-            ConnectionFactory.closeConexion(con);
+            Metodos.cerrarRecursos(con, ps, rs);
         }
         return lista;
     }

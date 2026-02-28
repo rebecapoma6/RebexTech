@@ -9,8 +9,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
 /**
- *
- * @author User
+ * Filtro global encargado de establecer la codificación de caracteres (UTF-8)
+ * para todas las peticiones y respuestas HTTP entrantes.
+ * Garantiza que los caracteres especiales (como tildes y eñes) se procesen,
+ * guarden y muestren correctamente en toda la tienda sin corromperse.
+ * @author Rebeca Poma
  */
 
 @WebFilter(filterName = "UTF8", urlPatterns = {"/*"})
@@ -34,9 +37,7 @@ public class CodeFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    /**
-     *
-     */
+    
     @Override
     public void destroy() {
     }

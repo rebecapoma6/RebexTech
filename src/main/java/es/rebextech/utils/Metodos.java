@@ -1,5 +1,4 @@
 package es.rebextech.utils;
-
 import es.rebextech.DAO.ConnectionFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,8 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- * @author User
+ * Clase de utilidades que agrupa herramientas genéricas del sistema.
+ * Proporciona métodos estáticos (accesibles desde cualquier parte sin instanciar)
+ * para realizar tareas comunes y repetitivas, tales como la encriptación 
+ * de contraseñas mediante el algoritmo MD5 y el cierre seguro de los recursos 
+ * de la base de datos (Connection, PreparedStatement, ResultSet).
+ * @author Rebeca Poma
  */
 public class Metodos {
 
@@ -63,13 +66,12 @@ public class Metodos {
         cookieBorrar.setMaxAge(0);
         response.addCookie(cookieBorrar);
     }
-    
-    
+
     public static boolean esCPValido(String cp) {
         // Explicación: 5 dígitos, los dos primeros del 01 al 52
         return cp != null && cp.matches("^(0[1-9]|[1-4][0-9]|5[0-2])[0-9]{3}$");
     }
-    
+
     public static boolean esTelefonoValido(String tlf) {
         // Explicación: 9 dígitos, empieza por 6, 7, 8 o 9
         return tlf != null && tlf.matches("^[6789][0-9]{8}$");
@@ -79,19 +81,19 @@ public class Metodos {
         return (valorCampo == null || valorCampo.trim().isEmpty());
     }
 
-        public static void cerrarRecursos(Connection con, PreparedStatement ps, ResultSet rs) {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception e) {
+    public static void cerrarRecursos(Connection con, PreparedStatement ps, ResultSet rs) {
+        try {
+            if (rs != null) {
+                rs.close();
             }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (Exception e) {
-            }
-            ConnectionFactory.closeConexion(con);
+        } catch (Exception e) {
         }
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (Exception e) {
+        }
+        ConnectionFactory.closeConexion(con);
+    }
 }

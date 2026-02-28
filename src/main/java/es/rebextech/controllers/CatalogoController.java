@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author User
+ * Servlet dedicado a la presentación y filtrado de los productos de la tienda.
+ * Captura los parámetros de búsqueda del usuario (texto libre, categorías, 
+ * rangos de precio) y se comunica con el ProductoDAO para devolver 
+ * la lista exacta de artículos que coinciden con los criterios.
+ * @author Rebeca Poma
  */
 public class CatalogoController extends HttpServlet {
 

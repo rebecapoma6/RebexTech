@@ -141,7 +141,7 @@
                                     <div class="modal-body p-4 text-center">
                                         <img src="${imgBase}/${produ.imagen}" class="img-fluid mb-3 rounded" style="max-height: 200px;">
 
-                                        <%-- Aquí es donde ocurre la magia --%>
+                                       
                                         <div class="text-start border-top pt-3">
                                             <h6 class="fw-bold text-morado text-uppercase small">Descripción del Producto</h6>
                                             <p class="text-muted" style="white-space: pre-wrap;">${produ.descripcion}</p>

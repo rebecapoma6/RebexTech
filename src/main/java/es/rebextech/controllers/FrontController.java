@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Pedido;
@@ -14,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- * @author User
+ * Servlet principal que actúa como enrutador básico de la aplicación.
+ * Se encarga de gestionar la navegación general del usuario, redirigiendo 
+ * las peticiones hacia las vistas públicas como el inicio (index) o el catálogo.
+ * @author Rebeca
+ * 
  */
 public class FrontController extends HttpServlet {
 
@@ -34,14 +36,13 @@ public class FrontController extends HttpServlet {
         String urlDestino = "index.jsp";
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         Usuario usuarioLogueado = (Usuario) sesion.getAttribute("usuarioSesion");
-        // ============================================================
-        // EL TRUCO PARA LA URL LIMPIA (Solo añade estas 4 líneas)
-        // ============================================================
+  
+        // Limpieza de URL  
         if (accionSolicitada == null && sesion.getAttribute("verCarritoDespues") != null) {
             accionSolicitada = "verCarrito";
             sesion.removeAttribute("verCarritoDespues");
         }
-        // ============================================================
+      
 
         if ("buscar".equals(accionSolicitada)) {
             urlDestino = "CatalogoController";
@@ -90,12 +91,10 @@ public class FrontController extends HttpServlet {
                             totalFactura += (lp.getProducto().getPrecio() * lp.getCantidad());
                         }
                         
-                        // 4. Mandamos los datos a la vista (detallePedido.jsp)
+                        // 4. Mandamos los datos a la vista detallePedido.jsp
                         request.setAttribute("idPedidoGenerado", idPed);
                         request.setAttribute("listaProductos", detalleLineas);
-                        request.setAttribute("totalPrecio", totalFactura);
-                        // Ojo: No mandamos "totalFinal" para que no salga el cartel verde de "Pago Exitoso" en facturas viejas
-                        
+                        request.setAttribute("totalPrecio", totalFactura);                                            
                         urlDestino = "/USUARIO/detallePedido.jsp";
                     } else {
                         urlDestino = "index.jsp";
