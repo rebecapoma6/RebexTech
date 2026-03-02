@@ -4,6 +4,7 @@ import es.rebextech.beans.Categoria;
 import java.util.List;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
  * Clase que escucha los eventos del ciclo de vida de la aplicación web.
@@ -14,17 +15,24 @@ import javax.servlet.ServletContextListener;
  * @author Rebeca Poma
  * 
  */
-@javax.servlet.annotation.WebListener
+@WebListener
 public class RebexContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-       
-        DAOFactory fabric = DAOFactory.getDAOFactory();
-
-        List<Categoria> listaCategorias = fabric.getCategoriaDAO().listarTodas();
-        sce.getServletContext().setAttribute("categoriasGlobales", listaCategorias);
-
+        try {
+            // Intentamos conectar a la base de datos
+            DAOFactory fabric = DAOFactory.getDAOFactory();
+            List<Categoria> listaCategorias = fabric.getCategoriaDAO().listarTodas();
+            sce.getServletContext().setAttribute("categoriasGlobales", listaCategorias);
+            
+            System.out.println("RebexTech: Categorias cargadas exitosamente.");
+            
+        } catch (Exception e) {
+            // Si la base de datos falla, Tomcat NO se apagará, solo imprimirá este error
+            System.out.println("RebexTech ERROR AL ARRANCAR LISTENER: " + e.getMessage());
+            sce.getServletContext().setAttribute("categoriasGlobales", new java.util.ArrayList<Categoria>());
+        }
     }
 
     @Override

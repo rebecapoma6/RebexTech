@@ -36,20 +36,24 @@ public class FrontController extends HttpServlet {
         String urlDestino = "index.jsp";
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         Usuario usuarioLogueado = (Usuario) sesion.getAttribute("usuarioSesion");
-  
+
         // Limpieza de URL  
         if (accionSolicitada == null && sesion.getAttribute("verCarritoDespues") != null) {
             accionSolicitada = "verCarrito";
             sesion.removeAttribute("verCarritoDespues");
         }
-      
 
         if ("buscar".equals(accionSolicitada)) {
             urlDestino = "CatalogoController";
 
         } else if (accionSolicitada == null || accionSolicitada.isEmpty() || "inicio".equals(accionSolicitada)) {
-            List<Producto> productosAlAzar = fabrica.getProductoDAO().getProductosAleatorios(12);
-            request.setAttribute("productosLanding", productosAlAzar);
+       
+            try {
+                List<Producto> productosAlAzar = fabrica.getProductoDAO().getProductosAleatorios(12);
+                request.setAttribute("productosLanding", productosAlAzar);
+            } catch (Exception e) {
+                System.out.println("Error al cargar productos de inicio: " + e.getMessage());
+            }
             urlDestino = "index.jsp";
 
         } else {
@@ -68,33 +72,36 @@ public class FrontController extends HttpServlet {
                     break;             
                 case "historialPedidos":
                     if (usuarioLogueado != null) {
-                        // Traemos la lista del DAO filtrada por usuario y estado 'f'
-                        List<Pedido> listaHistorial = fabrica.getPedidoDAO().getHistorialPedidos(usuarioLogueado.getIdusuario());               
-                        request.setAttribute("historialPedidos", listaHistorial);
+                        // --- TRY-CATCH PARA HISTORIAL ---
+                        try {
+                            List<Pedido> listaHistorial = fabrica.getPedidoDAO().getHistorialPedidos(usuarioLogueado.getIdusuario());                
+                            request.setAttribute("historialPedidos", listaHistorial);
+                        } catch (Exception e) {
+                            System.out.println("Error al cargar historial: " + e.getMessage());
+                        }
                         urlDestino = "/USUARIO/historialPedidos.jsp";
                     } else {
-                        // Si no está logueado, lo mandamos al inicio
                         urlDestino = "index.jsp";
                     }
                     break;
                 case "verDetallePedido":
                     if (usuarioLogueado != null) {
-                        // 1. Atrapamos el ID del pedido que viene del botón
-                        int idPed = Integer.parseInt(request.getParameter("id"));
-                        
-                        // 2. Buscamos todas las líneas (productos) de ese pedido
-                        List<LineaPedido> detalleLineas = fabrica.getPedidoDAO().getLineasPorIdPedido(idPed);
-                        
-                        // 3. Calculamos el total sumando (precio * cantidad) de cada línea
-                        double totalFactura = 0;
-                        for (LineaPedido lp : detalleLineas) {
-                            totalFactura += (lp.getProducto().getPrecio() * lp.getCantidad());
+                        // --- TRY-CATCH PARA DETALLE ---
+                        try {
+                            int idPed = Integer.parseInt(request.getParameter("id"));
+                            List<LineaPedido> detalleLineas = fabrica.getPedidoDAO().getLineasPorIdPedido(idPed);
+                            
+                            double totalFactura = 0;
+                            for (LineaPedido lp : detalleLineas) {
+                                totalFactura += (lp.getProducto().getPrecio() * lp.getCantidad());
+                            }
+                            
+                            request.setAttribute("idPedidoGenerado", idPed);
+                            request.setAttribute("listaProductos", detalleLineas);
+                            request.setAttribute("totalPrecio", totalFactura);                                             
+                        } catch (Exception e) {
+                            System.out.println("Error al cargar detalle pedido: " + e.getMessage());
                         }
-                        
-                        // 4. Mandamos los datos a la vista detallePedido.jsp
-                        request.setAttribute("idPedidoGenerado", idPed);
-                        request.setAttribute("listaProductos", detalleLineas);
-                        request.setAttribute("totalPrecio", totalFactura);                                            
                         urlDestino = "/USUARIO/detallePedido.jsp";
                     } else {
                         urlDestino = "index.jsp";

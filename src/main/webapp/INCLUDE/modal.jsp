@@ -49,7 +49,8 @@
             <div class="modal-content border-0 overflow-hidden shadow-lg">
                 <div class="row g-0">
                     <div class="col-lg-4 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 sidebar-registro-gradient">
-                        <img src="${urlBase}/IMAGENES/LogoRebexTech.png" alt="Logo" class="logo-sidebar-size">
+<!--                        <img src="${urlBase}/IMAGENES/LogoRebexTech.png" alt="Logo" class="logo-sidebar-size">-->
+                        <img src="${urlBase}/IMAGENES/LogoRebexTech.png" alt="Logo" class="logo-sidebar-size" id="previewLogoRegistro" style="border-radius: 50%; object-fit: cover;">
                     <h3 class="mt-4 fw-bold text-center">¡Únete a la élite de RebexTech!</h3>
                 </div>
 
@@ -126,7 +127,8 @@
 
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-morado">Sube tu Imagen de Perfil (Avatar)</label>
-                            <input type="file" name="avatar_file" class="form-control border-rebex" accept="image/*">
+<!--                            <input type="file" name="avatar_file" class="form-control border-rebex" accept="image/*">-->
+                            <input type="file" name="avatar_file" id="inputAvatarRegistro" class="form-control border-rebex" accept="image/*">
                             <div class="form-text">Máximo 100KB (Solo JPG, PNG o GIF).</div>
                         </div>
 
@@ -142,5 +144,9 @@
     </div>
 </div>
                     
-<script>const RUTA_LOGIN = "${urlBase}/UsuarioController";</script>
+<script>
+    const RUTA_LOGIN = "${urlBase}/UsuarioController";
+    const URL_REGISTRO = "${urlBase}/RegistroController";
+</script>
 <script src="${urlBase}/JS/login.js"></script>
+<script src="${urlBase}/JS/registro.js"></script>

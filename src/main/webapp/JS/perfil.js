@@ -1,67 +1,58 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // --- 1. CONSTANTES ---
-    const inputAvatar = document.getElementById('inputAvatar');
-    const avatarPreview = document.getElementById('avatarPreview');
-    const formDatos = document.getElementById('formUpdateDatos');
-    const formPass = document.getElementById('formUpdatePass');
+    const inicializarAvatarPerfil = () => {
+        const inputAvatar = document.getElementById('inputAvatar');
+        const avatarPreview = document.getElementById('avatarPreview');
 
-    // --- 2. LÓGICA DE LA IMAGEN (VISTA PREVIA Y SUBIDA) ---
-    if (inputAvatar) {
-        inputAvatar.addEventListener('change', function (event) {
+        if (!inputAvatar || !avatarPreview) return;
 
+        inputAvatar.addEventListener('change', (event) => {
             const archivo = event.target.files[0];
-            if (archivo) {
-                // VISTA PREVIA
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    avatarPreview.src = e.target.result;
-                    const navAvatar = document.querySelector('img.rounded-circle[width="30"]') ||
-                            document.querySelector('.navbar img.rounded-circle');
-                    if (navAvatar)
-                        navAvatar.src = e.target.result;
-                };
-                reader.readAsDataURL(archivo);
+            if (!archivo) return;
 
-                // SUBIDA AUTOMÁTICA (AJAX)
-                const formData = new FormData();
-                formData.append("accion", "updateAvatar");
-                formData.append("avatar_file", archivo);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                avatarPreview.src = e.target.result;
 
-                fetch('../UsuarioController', {
-                    method: 'POST',
-                    body: formData
+                const navAvatar = document.querySelector('img.rounded-circle[width="30"]') ||
+                                  document.querySelector('.navbar img.rounded-circle');
+                if (navAvatar) navAvatar.src = e.target.result;
+            };
+            reader.readAsDataURL(archivo);
+
+            const formData = new FormData();
+            formData.append("accion", "updateAvatar");
+            formData.append("avatar_file", archivo);
+
+            fetch(URL_PERFIL, { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === "success") {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Imagen de perfil actualizada',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
                 })
-                        .then(response => response.json())
-                        .then(resultado => {
-                            if (resultado.status === "success") {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-end',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: 'Imagen de perfil actualizada'
-                                });
-                            }
-                        })
-                        .catch(error => console.error("Error avatar", error));
-            }
+                .catch(err => console.error("Error avatar", err));
         });
-    }
+    };
 
-    // --- 3. BOTÓN GUARDAR CAMBIOS ---
-    if (formDatos) {
+    const inicializarFormularioDatos = () => {
+        const formDatos = document.getElementById('formUpdateDatos');
+        if (!formDatos) return;
+
         formDatos.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(formDatos);
             formData.append('accion', 'updateDatos');
 
             try {
-                const resp = await fetch(URL_PERFIL, {method: 'POST', body: formData});
+                const resp = await fetch(URL_PERFIL, { method: 'POST', body: formData });
                 const data = await resp.json();
 
                 if (data.status === 'success') {
@@ -71,9 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         text: 'Tus datos se han guardado correctamente.',
                         timer: 1500,
                         timerProgressBar: true
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    }).then(() => window.location.reload());
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -86,12 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 Swal.fire('Error', 'Error de conexión con el servidor', 'error');
             }
         });
-    }
+    };
 
-    // --- 4. BOTÓN ACTUALIZAR CONTRASEÑA ---
-    if (formPass) {
+    const inicializarFormularioPass = () => {
+        const formPass = document.getElementById('formUpdatePass');
+        if (!formPass) return;
+
         formPass.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const nPass = formPass.querySelector('input[name="newPass"]').value;
             const cPass = formPass.querySelector('input[name="confirmPass"]').value;
 
@@ -109,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('accion', 'updatePass');
 
             try {
-                const resp = await fetch(URL_PERFIL, {method: 'POST', body: formData});
+                const resp = await fetch(URL_PERFIL, { method: 'POST', body: formData });
                 const data = await resp.json();
 
                 if (data.status === 'success') {
@@ -120,9 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         confirmButtonColor: '#6f42c1',
                         timer: 1500,
                         showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    }).then(() => window.location.reload());
                 } else {
                     Swal.fire('Error', data.mensaje, 'error');
                 }
@@ -130,5 +120,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 Swal.fire('Error', 'Fallo en la comunicación con el servidor', 'error');
             }
         });
-    }
+    };
+
+    // Ejecutar funciones del perfil
+    inicializarAvatarPerfil();
+    inicializarFormularioDatos();
+    inicializarFormularioPass();
 });

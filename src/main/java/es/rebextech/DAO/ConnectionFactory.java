@@ -1,4 +1,3 @@
-
 package es.rebextech.DAO;
 
 import java.sql.Connection;
@@ -9,18 +8,17 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
+ * Clase utilitaria (Singleton/Factory) que administra el acceso a la base de
+ * datos. Utiliza un Pool de Conexiones (DBCP) configurado mediante JNDI en el
+ * archivo context.xml. Esto mejora el rendimiento del servidor al reutilizar
+ * conexiones activas.
  *
- * @author User
+ * @author Rebeca Poma
  */
 public class ConnectionFactory {
 
     private static final String DATA_SOURCE = "java:comp/env/jdbc/RebexTechDS";
 
-    /**
-     *Solicita una conexión libre al Pool de conexiones de Tomcat.
-     *@return Un objeto Connection listo para ejecutar consultas SQL.
-     *@ throws SQLException Si el Pool se agota o hay un error de red con MySQL.
-     */
     public static Connection getConnection() {
         Connection conexion = null;
         try {
@@ -28,20 +26,21 @@ public class ConnectionFactory {
             DataSource ds = (DataSource) contextoInicial.lookup(DATA_SOURCE);
             conexion = ds.getConnection();
         } catch (NamingException | SQLException ex) {
-            // Es vital loguear el error para depurar si el recurso JNDI falla
-            ex.printStackTrace();
+            // ESTO HARÁ QUE EL ERROR SALGA EN TU PÁGINA SI TIENES UN TRY-CATCH ARRIBA
+            throw new RuntimeException("REBEX_ERROR_CONEXION: " + ex.getMessage());
         }
         return conexion;
     }
 
     /**
      * Devuelve la conexión al Pool para que pueda ser reutilizada.
+     *
      * @param conexion La conexión a cerrar
      */
     public static void closeConexion(Connection conexion) {
         try {
             if (conexion != null && !conexion.isClosed()) {
-                conexion.close(); 
+                conexion.close();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

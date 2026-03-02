@@ -60,7 +60,7 @@ public class CarritoController extends HttpServlet {
         if (accionCarrito != null) {
             DAOFactory fabrica = DAOFactory.getDAOFactory();
             switch (accionCarrito) {
-                case "agregar":
+                case "agregar":                   
                     if (idProducto != null) {
                         if (usuarioLogueado == null) {
                             datosCarrito = datosCarrito.isEmpty() ? idProducto : datosCarrito + "-" + idProducto;
