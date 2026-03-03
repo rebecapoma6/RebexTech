@@ -177,7 +177,7 @@ public class CarritoController extends HttpServlet {
 
                     LineaPedido lp = new LineaPedido();
                     lp.setProducto(p);
-                    lp.setCantidad((byte) cantidadReal); // LA MAGIA ESTÁ AQUÍ
+                    lp.setCantidad((byte) cantidadReal); 
                     listaParaJSP.add(lp);
 
                     total += (p.getPrecio() * cantidadReal);

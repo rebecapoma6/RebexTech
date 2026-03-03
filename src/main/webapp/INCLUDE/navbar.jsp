@@ -2,20 +2,11 @@
 <c:set var="imgLogo" value="${pageContext.request.contextPath}/IMAGENES" />
 <c:set var="url" value="${pageContext.request.contextPath}" />
 
-
-<%--<c:if test="${not empty sessionScope.alerta}">
-    <div class="alert alert-${sessionScope.tipoAlerta} alert-dismissible fade show text-center m-0" role="alert" style="border-radius: 0;">
-        <strong>${sessionScope.alerta}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <c:remove var="alerta" scope="session"/>
-    <c:remove var="tipoAlerta" scope="session"/>
-</c:if>--%>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
     <div class="container">
-        <a class="navbar-brand" href="${url}/FrontController">
+        <a class="navbar-brand" href="${url}/FrontController" title="Volver a la página principal">
             <img src="${imgLogo}/LogoRebexTech.png" 
                  alt="RebexTech" 
                  class="logo-rebex">
@@ -64,14 +55,14 @@
             <form class="d-flex mx-auto w-50" action="${url}/FrontController" method="POST">
                 <input type="hidden" name="accion" value="buscar">
                 <input class="form-control me-2 form-control-rebex" type="search" name="busqueda" placeholder="¿Qué componente buscas?">
-                <button class="btn btn-rebex" type="submit"><i class="bi bi-search"></i></button>
+                <button class="btn btn-rebex" type="submit" title="Buscar componentes"><i class="bi bi-search"></i></button>
             </form>
 
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item me-3">
                     <form action="${url}/FrontController" method="POST" id="formIconoCarrito" style="display:inline;">
                         <input type="hidden" name="accion" value="verCarrito">
-                        <a class="nav-link position-relative icono-carrito-rebex" href="javascript:void(0)" onclick="document.getElementById('formIconoCarrito').submit();">
+                        <a class="nav-link position-relative icono-carrito-rebex" href="javascript:void(0)" onclick="document.getElementById('formIconoCarrito').submit();" title="Ver Carrito">
                             <i class="bi bi-cart-fill fs-4 text-white"></i>
                             <span id="cantidadProductosNavbar" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger tamano-badge-carrito">
                                 ${empty sessionScope.cantidadProductos ? 0 : sessionScope.cantidadProductos}
@@ -90,7 +81,7 @@
                     </c:when>
                     <c:otherwise>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white fw-bold" href="#" id="menuUsuario" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-bold" href="#" id="menuUsuario" data-bs-toggle="dropdown" title="Opciones de mi cuenta">
                                 <img src="${url}/IMAGENES/avatares/${sessionScope.usuarioSesion.avatar}" 
                                      class="rounded-circle me-1" 
                                      style="width: 24px; height: 24px; object-fit: cover;">

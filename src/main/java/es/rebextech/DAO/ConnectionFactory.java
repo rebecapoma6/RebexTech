@@ -26,7 +26,7 @@ public class ConnectionFactory {
             DataSource ds = (DataSource) contextoInicial.lookup(DATA_SOURCE);
             conexion = ds.getConnection();
         } catch (NamingException | SQLException ex) {
-            // ESTO HARÁ QUE EL ERROR SALGA EN TU PÁGINA SI TIENES UN TRY-CATCH ARRIBA
+         
             throw new RuntimeException("REBEX_ERROR_CONEXION: " + ex.getMessage());
         }
         return conexion;

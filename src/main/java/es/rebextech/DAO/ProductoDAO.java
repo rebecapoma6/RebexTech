@@ -111,7 +111,7 @@ public class ProductoDAO implements IProductoDAO {
         List<Producto> listaProductos = new ArrayList<>();
 
         String filtro = "%" + textoBusqueda + "%";
-        String sql = "SELECT * FROM productos WHERE nombre LIKE ? OR marca LIKE ? ";
+        String sql = "SELECT * FROM productos WHERE nombre LIKE ? OR descripcion LIKE ? OR marca LIKE ?";
         // Buscamos en nombre, marca o descripción.
 
         try {
@@ -119,6 +119,7 @@ public class ProductoDAO implements IProductoDAO {
             ps = cnx.prepareStatement(sql);
             ps.setString(1, filtro);
             ps.setString(2, filtro);
+            ps.setString(3, filtro);
 
             resultado = ps.executeQuery();
             while (resultado.next()) {

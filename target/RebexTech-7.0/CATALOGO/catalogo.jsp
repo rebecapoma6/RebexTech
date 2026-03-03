@@ -121,7 +121,7 @@
                                                 <input type="hidden" name="accionCarrito" value="agregar">
                                                 <input type="hidden" name="idProducto" value="${produ.idproducto}">
 
-                                                <button type="submit" class="btn btn-rebex rounded-3">
+                                                <button type="submit" class="btn btn-rebex rounded-3" title="Agregar al carrito de compras">
                                                     <i class="bi bi-cart-plus-fill"></i>
                                                 </button>
                                             </form>

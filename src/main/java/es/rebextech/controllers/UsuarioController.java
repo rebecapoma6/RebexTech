@@ -38,6 +38,8 @@ public class UsuarioController extends HttpServlet {
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         HttpSession sesion = request.getSession();
         String urlDestino = "FrontController";
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         switch (accion) {
             case "login":
@@ -45,9 +47,6 @@ public class UsuarioController extends HttpServlet {
                 String email = request.getParameter("email");
                 String pass = request.getParameter("password");
                 Usuario user = fabrica.getUsuarioDAO().login(email, pass);
-                
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
 
                 if (user != null) {
                     Cookie[] cookies = request.getCookies();
