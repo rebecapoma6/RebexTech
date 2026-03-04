@@ -1,5 +1,4 @@
 package es.rebextech.controllers;
-
 import es.rebextech.IDAO.DAOFactory;
 import es.rebextech.beans.LineaPedido;
 import es.rebextech.beans.Pedido;
@@ -14,7 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ * Servlet que actúa como controlador especializado para la gestión de pedidos en RebexTech.
+ * Implementa la lógica de negocio para el ciclo final de compra (Checkout),
+ * la recuperación del historial de pedidos del usuario y la visualización 
+ * detallada de comprobantes/facturas electrónicas.
+ * Se encarga de transformar el carrito actual en un registro persistente en la 
+ * base de datos y de gestionar la transición de datos hacia las vistas de usuario.
  * @author Rebeca Poma
  */
 public class PedidoController extends HttpServlet {
@@ -25,6 +29,19 @@ public class PedidoController extends HttpServlet {
         doPost(request, response);
     }
 
+    /***
+     * 
+     * Gestiona tres acciones principales:
+     * <li><b>finalizarCompra:</b> Registra el pedido en la BD, vacía el carrito y genera la factura.</li>
+     * <li><b>historialPedidos:</b> Recupera todos los pedidos realizados por el usuario logueado.</li>
+     * <li><b>verDetallePedido:</b> Carga las líneas de detalle y la fecha original de un pedido específico.</li>
+     * @param request objeto que contiene la petición del cliente
+     * @param response objeto que contiene la respuesta del servlet
+     * @throws ServletException si ocurre un error específico del servlet
+     * @throws IOException si ocurre un error de entrada/salida
+     *
+     *
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,7 +50,7 @@ public class PedidoController extends HttpServlet {
         DAOFactory fabrica = DAOFactory.getDAOFactory();
         String urlDestino = "index.jsp";
 
-        // Un truquito: capturamos tanto 'accion' como 'accionCarrito'
+        
         String accion = request.getParameter("accion");
         if (accion == null) {
             accion = request.getParameter("accionCarrito");
