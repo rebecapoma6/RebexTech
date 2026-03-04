@@ -139,8 +139,9 @@
                                 </button>
                             </c:when>
                             <c:otherwise>
-                                <form action="CarritoController" method="POST">
-                                    <input type="hidden" name="accionCarrito" value="finalizarCompra"> <button type="submit" class="btn btn-rebex w-100 py-3 fw-bold">
+                                <form action="${baseUrl}/FrontController" method="POST">
+                                    <input type="hidden" name="accion" value="finalizarCompra"> 
+                                    <button type="submit" class="btn btn-rebex w-100 py-3 fw-bold shadow-sm">
                                         TRAMITAR COMPRA
                                     </button>
                                 </form>
@@ -150,6 +151,9 @@
                 </div>
             </div>
         </div>
+
+                            
+<!--                            AQUI ES MI MODAL DE VACIAR CARRITO -->
 
         <div class="modal fade" id="confirmarVaciar" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">

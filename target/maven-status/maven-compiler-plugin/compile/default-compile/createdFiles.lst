@@ -17,6 +17,7 @@ es\rebextech\beans\Producto.class
 es\rebextech\utils\Metodos.class
 es\rebextech\controllers\RegistroController.class
 es\rebextech\beans\LineaPedido.class
+es\rebextech\controllers\PedidoController.class
 es\rebextech\IDAO\IProductoDAO.class
 es\rebextech\beans\Usuario.class
 es\rebextech\controllers\AjaxController.class

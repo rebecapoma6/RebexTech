@@ -53,7 +53,16 @@
                                 <div class="col-sm-6 text-md-end">
                                     <h6 class="text-uppercase text-muted fw-bold small mb-3">Fecha de Pago</h6>
                                     <p class="fs-5 fw-bold text-dark">
-                                        <fmt:formatDate value="<%= new java.util.Date()%>" pattern="dd-MM-yyyy" />
+                                        <c:choose>
+                                            <c:when test="${not empty fechaPedido}">
+                                                <%-- Fecha original para el Historial --%>
+                                                <fmt:formatDate value="${fechaPedido}" pattern="dd-MM-yyyy" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <%-- Fecha de hoy para compras nuevas --%>
+                                                <fmt:formatDate value="${fechaHoy}" pattern="dd-MM-yyyy" />
+                                            </c:otherwise>
+                                        </c:choose>
                                     </p>
                                 </div>
                             </div>

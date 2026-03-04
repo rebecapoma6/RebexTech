@@ -14,14 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 /**
- * Servlet central para la lógica comercial de la tienda.
- * Gestiona el ciclo de vida del carrito de compras: desde añadir/eliminar productos
- * (trabajando con Cookies para anónimos o BD para registrados) hasta 
- * el procesamiento final del pago (Checkout) que genera la factura.
+ * Servlet central para la lógica comercial de la tienda. Gestiona el ciclo de
+ * vida del carrito de compras: desde añadir/eliminar productos (trabajando con
+ * Cookies para anónimos o BD para registrados) hasta el procesamiento final del
+ * pago (Checkout) que genera la factura.
+ *
  * @author Rebeca
- * 
+ *
  */
 public class CarritoController extends HttpServlet {
 
@@ -60,7 +60,7 @@ public class CarritoController extends HttpServlet {
         if (accionCarrito != null) {
             DAOFactory fabrica = DAOFactory.getDAOFactory();
             switch (accionCarrito) {
-                case "agregar":                   
+                case "agregar":
                     if (idProducto != null) {
                         if (usuarioLogueado == null) {
                             datosCarrito = datosCarrito.isEmpty() ? idProducto : datosCarrito + "-" + idProducto;
@@ -97,39 +97,6 @@ public class CarritoController extends HttpServlet {
                         datosCarrito = "";
                     } else {
                         fabrica.getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());
-                    }
-                    break;
-
-                case "finalizarCompra":
-                    if (usuarioLogueado != null) {
-
-                        // Recuperamos lo que el usuario tiene en el carrito antes de borrar
-                        List<LineaPedido> carritoFinal = fabrica.getProductoDAO().getProductosCarritoBD(usuarioLogueado.getIdusuario());
-
-                        double totalFinal = 0;
-                        for (LineaPedido lp : carritoFinal) {
-                            totalFinal += lp.getSubtotal();
-                        }
-
-                        //El DAO ahora devuelve un short (el ID del pedido)
-                        short idGenerado = fabrica.getPedidoDAO().finalizarPedido(usuarioLogueado.getIdusuario(), carritoFinal, totalFinal);
-
-                        if (idGenerado > 0) {
-                            // Pasamos datos a la factura (detallePedido.jsp)
-                            request.setAttribute("idPedidoGenerado", idGenerado);
-                            request.setAttribute("listaProductos", carritoFinal);
-                            request.setAttribute("totalPrecio", totalFinal);
-                            request.setAttribute("totalFinal", true);
-
-                            // Limpiamos carrito de la BD y de la sesión
-                            fabrica.getPedidoDAO().vaciarCarritoBD(usuarioLogueado.getIdusuario());
-                            sesion.setAttribute("cantidadProductos", 0);
-                            System.out.println("DEBUG: Redirigiendo a detallePedido.jsp");
-
-                            // Mostramos la factura
-                            request.getRequestDispatcher("/USUARIO/detallePedido.jsp").forward(request, response);
-                            return;
-                        }
                     }
                     break;
             }
@@ -177,7 +144,7 @@ public class CarritoController extends HttpServlet {
 
                     LineaPedido lp = new LineaPedido();
                     lp.setProducto(p);
-                    lp.setCantidad((byte) cantidadReal); 
+                    lp.setCantidad((byte) cantidadReal);
                     listaParaJSP.add(lp);
 
                     total += (p.getPrecio() * cantidadReal);
